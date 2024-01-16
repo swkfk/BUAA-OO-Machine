@@ -24,7 +24,7 @@ class User:
         return self.user_setting["UserName"]
 
     def temp_mode(self):
-        return self.user_setting["TempMode"]
+        return self.user_setting["TempMode"] == "true"
 
     def enter_temp(self):
         self.user_setting["TempMode"] = True
