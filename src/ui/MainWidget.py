@@ -1,4 +1,6 @@
-from PyQt6.QtCore import QSize, QRect
+import sys
+
+from PyQt6.QtCore import QSize, QRect, QCoreApplication, QProcess
 from PyQt6.QtWidgets import QWidget, QPushButton, QComboBox
 
 from src.ui.RegisterDialog import RegisterDialog
@@ -31,19 +33,8 @@ class MainWidget(QWidget):
         self.setFixedSize(UI.WindowSize)
 
         # Component declaration
-        self.m_btn_user = None
-        self.m_combo_proj = None
-        self.m_combo_unit = None
-        self.m_btn_sync = None
-        self.m_btn_upload = None
-        self.setup_ui()
-        self.signal_bind()
-
-        self.show()
-
-    def setup_ui(self):
         self.m_btn_user = QPushButton(self)
-        self.m_btn_user.setText(Strings.UserBtn.Temp if self.temp_mode else Strings.UserBtn.User)
+        self.m_btn_user.setText(Strings.UserMode.BtnTemp if self.temp_mode else Strings.UserMode.BtnUser)
         self.m_btn_user.setGeometry(UI.UserBtnGeo)
 
         self.m_combo_proj = QComboBox(self)
@@ -58,5 +49,18 @@ class MainWidget(QWidget):
         self.m_btn_upload = QPushButton(Strings.UploadData.Btn, self)
         self.m_btn_upload.setGeometry(UI.UploadDataBtnGeo)
 
+        # Signals and Slots binding
+        self.signal_bind()
+
+        self.show()
+
     def signal_bind(self):
-        pass
+        self.m_btn_user.clicked.connect(self.slot_user_mode_change)
+
+    def slot_user_mode_change(self):
+        self.user.trigger_temp()
+
+        # Restart the application
+        QCoreApplication.quit()
+        status = QProcess.startDetached(sys.executable, sys.argv)
+        sys.exit(0 if status[0] else 2)
