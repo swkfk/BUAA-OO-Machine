@@ -3,7 +3,7 @@ import traceback as tb
 
 from PyQt6.QtWidgets import QApplication, QMessageBox
 
-from MainWidget import MainWidget
+from src.ui.MainWidget import MainWidget
 
 
 def exception_hook(exctype, value, traceback):
