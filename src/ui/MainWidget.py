@@ -1,11 +1,13 @@
 import sys
 
-from PyQt6.QtCore import QSize, QRect, QCoreApplication, QProcess
-from PyQt6.QtWidgets import QWidget, QPushButton, QComboBox
+from PyQt6.QtCore import QSize, QRect, QCoreApplication, QProcess, Qt
+from PyQt6.QtWidgets import QWidget, QPushButton, QComboBox, QVBoxLayout, QScrollArea
 
+from src.ui.PointArea import PointArea
 from src.ui.RegisterDialog import RegisterDialog
 from src.ui.HistoryDialog import HistoryDialog
 from src.core.settings import LocalAuthentic
+from src.core.requests.CheckPointList import GetProjList, GetUnitList, GetPointInfo
 from src.strings.MainWidget import Strings
 
 
@@ -13,13 +15,19 @@ class UI:
     WindowSize = QSize(800, 600)
 
     UserBtnGeo = QRect(20, 20, 100, 30)
-    ProjComboGeo = QRect(140, 20, 100, 30)
-    UnitComboGeo = QRect(260, 20, 100, 30)
+    ProjComboGeo = QRect(140, 20, 190, 30)
+    UnitComboGeo = QRect(350, 20, 190, 30)
     SyncBtnGeo = QRect(560, 20, 100, 30)
     UploadDataBtnGeo = QRect(680, 20, 100, 30)
 
     HistoryBtnGeo = QRect(560, 60, 100, 30)
     SubmitBtnGeo = QRect(680, 60, 100, 30)
+
+    ScrollAreaGeo = QRect(20, 110, 760, 460)
+
+    @staticmethod
+    def ScrollWidgetSize(c):
+        return QSize(740, 80 * c)
 
 
 class MainWidget(QWidget):
@@ -61,14 +69,29 @@ class MainWidget(QWidget):
         self.m_btn_submit = QPushButton(Strings.Submit.Btn, self)
         self.m_btn_submit.setGeometry(UI.SubmitBtnGeo)
 
+        self.m_widget_list_point = []
+        self.m_widget_point = QWidget()
+        self.m_layout_point = QVBoxLayout()
+        self.m_scroll_point = QScrollArea(self)
+        self.m_scroll_point.setGeometry(UI.ScrollAreaGeo)
+
         # Signals and Slots binding
         self.signal_bind()
+
+        # Update the data shown in the main widget
+        self.proj_lst = []
+        self.unit_lst = []
+        self.point_lst = []
+        self.slot_update_proj()
 
         self.show()
 
     def signal_bind(self):
         self.m_btn_user.clicked.connect(self.slot_user_mode_change)
         self.m_btn_history.clicked.connect(self.slot_view_history)
+        self.m_btn_sync.clicked.connect(self.slot_update_proj)
+        self.m_combo_proj.currentIndexChanged.connect(self.slot_update_unit)
+        self.m_combo_unit.currentIndexChanged.connect(self.slot_update_point)
 
     def slot_user_mode_change(self):
         self.user.trigger_temp()
@@ -80,3 +103,37 @@ class MainWidget(QWidget):
 
     def slot_view_history(self):
         HistoryDialog(self, self.user_name)
+
+    def slot_update_proj(self):
+        self.proj_lst = reversed(GetProjList())
+        self.m_combo_proj.clear()
+        self.m_combo_proj.addItems(self.proj_lst)
+
+    def slot_update_unit(self):
+        if self.m_combo_proj.count() == 0:
+            return
+        self.unit_lst = reversed(GetUnitList(self.m_combo_proj.count() - self.m_combo_proj.currentIndex() - 1))
+        self.m_combo_unit.clear()
+        self.m_combo_unit.addItems(self.unit_lst)
+
+    def slot_update_point(self):
+        if self.m_combo_unit.count() == 0:
+            return
+        self.point_lst = GetPointInfo(
+            self.m_combo_proj.count() - self.m_combo_proj.currentIndex() - 1,
+            self.m_combo_unit.count() - self.m_combo_unit.currentIndex() - 1
+        )
+
+        self.m_widget_list_point.clear()
+        while self.m_layout_point.count() > 0:
+            w = self.m_layout_point.takeAt(0).widget()
+            self.m_layout_point.removeWidget(w)
+            w.deleteLater()
+
+        for idx, point in enumerate(self.point_lst):
+            self.m_widget_list_point.append(PointArea(idx, point["same"], point["diff"]))
+        for widget in self.m_widget_list_point:
+            self.m_layout_point.addWidget(widget)
+        self.m_widget_point.resize(UI.ScrollWidgetSize(len(self.m_widget_list_point)))
+        self.m_widget_point.setLayout(self.m_layout_point)
+        self.m_scroll_point.setWidget(self.m_widget_point)
