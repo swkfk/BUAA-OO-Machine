@@ -24,10 +24,10 @@ class User:
         return self.user_setting["UserName"]
 
     def temp_mode(self):
-        return self.user_setting["TempMode"] == "true"
+        return str(self.user_setting["TempMode"]).lower() == "true"
 
     def trigger_temp(self):
-        self.user_setting["TempMode"] = not self.user_setting["TempMode"]
+        self.user_setting["TempMode"] = not self.temp_mode()
 
     def create_user(self, name):
         self.user_setting["TempMode"] = False
@@ -40,13 +40,14 @@ if __name__ == "__main__":
     print(user.status())
 
     user.create_user("李华")  # Chinese character tests
-    print(user.status(), user.user_name())
+    print(user.status(), user.user_name(), user.user_setting["TempMode"])
+    print(type(user.user_setting["TempMode"]))
 
     user.trigger_temp()
-    print(user.status(), user.user_name())
+    print(user.status(), user.user_name(), user.user_setting["TempMode"])
 
     user.trigger_temp()
-    print(user.status(), user.user_name())
+    print(user.status(), user.user_name(), user.user_setting["TempMode"])
 
     user.user_setting.settings.clear()
     print(user.status())
