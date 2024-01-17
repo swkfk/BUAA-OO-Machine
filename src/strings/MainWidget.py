@@ -13,3 +13,9 @@ class Strings:
 
     class UploadData:
         Btn = "上传输入数据"
+
+    class History:
+        Btn = "提交记录"
+
+    class Submit:
+        Btn = "上传代码"

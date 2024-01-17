@@ -4,17 +4,22 @@ from PyQt6.QtCore import QSize, QRect, QCoreApplication, QProcess
 from PyQt6.QtWidgets import QWidget, QPushButton, QComboBox
 
 from src.ui.RegisterDialog import RegisterDialog
+from src.ui.HistoryDialog import HistoryDialog
 from src.core.settings import LocalAuthentic
 from src.strings.MainWidget import Strings
 
 
 class UI:
     WindowSize = QSize(800, 600)
+
     UserBtnGeo = QRect(20, 20, 100, 30)
     ProjComboGeo = QRect(140, 20, 100, 30)
     UnitComboGeo = QRect(260, 20, 100, 30)
     SyncBtnGeo = QRect(560, 20, 100, 30)
     UploadDataBtnGeo = QRect(680, 20, 100, 30)
+
+    HistoryBtnGeo = QRect(560, 60, 100, 30)
+    SubmitBtnGeo = QRect(680, 60, 100, 30)
 
 
 class MainWidget(QWidget):
@@ -49,6 +54,13 @@ class MainWidget(QWidget):
         self.m_btn_upload = QPushButton(Strings.UploadData.Btn, self)
         self.m_btn_upload.setGeometry(UI.UploadDataBtnGeo)
 
+        self.m_btn_history = QPushButton(Strings.History.Btn, self)
+        self.m_btn_history.setGeometry(UI.HistoryBtnGeo)
+        self.m_btn_history.setEnabled(not self.temp_mode)
+
+        self.m_btn_submit = QPushButton(Strings.Submit.Btn, self)
+        self.m_btn_submit.setGeometry(UI.SubmitBtnGeo)
+
         # Signals and Slots binding
         self.signal_bind()
 
@@ -56,6 +68,7 @@ class MainWidget(QWidget):
 
     def signal_bind(self):
         self.m_btn_user.clicked.connect(self.slot_user_mode_change)
+        self.m_btn_history.clicked.connect(self.slot_view_history)
 
     def slot_user_mode_change(self):
         self.user.trigger_temp()
@@ -64,3 +77,6 @@ class MainWidget(QWidget):
         QCoreApplication.quit()
         status = QProcess.startDetached(sys.executable, sys.argv)
         sys.exit(0 if status[0] else 2)
+
+    def slot_view_history(self):
+        HistoryDialog(self, self.user_name)
