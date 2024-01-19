@@ -139,10 +139,9 @@ class MainWidget(QWidget):
     def slot_update_point(self):
         if self.m_combo_unit.count() == 0:
             return
-        self.point_lst = GetPointInfo(
-            self.m_combo_proj.count() - self.m_combo_proj.currentIndex() - 1,
-            self.m_combo_unit.count() - self.m_combo_unit.currentIndex() - 1
-        )
+        self.point_lst = GetPointInfo(self.user_name if not self.temp_mode else "__TEST__",
+                                      self.m_combo_proj.count() - self.m_combo_proj.currentIndex() - 1,
+                                      self.m_combo_unit.count() - self.m_combo_unit.currentIndex() - 1)
 
         self.m_widget_list_point.clear()
         while self.m_layout_point.count() > 0:
