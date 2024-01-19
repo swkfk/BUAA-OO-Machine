@@ -3,6 +3,7 @@ import os.path
 from PyQt6.QtCore import QSize, QRect, Qt, QUrl
 from PyQt6.QtWidgets import QDialog, QPushButton, QLabel, QProgressBar, QFileDialog
 
+from src.core.requests.UrlGenerator import URL
 from src.strings.HistoryDialog import Strings
 from src.core.requests.HistoryView import GetHistoryList
 from src.core.requests.DownloadThread import DownloadThread
@@ -107,7 +108,7 @@ class HistoryDialog(QDialog):
             return
 
         self.download_thread: DownloadThread = DownloadThread(
-            "https://mirrors.tuna.tsinghua.edu.cn/ctex/3.0/CTeX_3.0.215.2.exe",  # Just for test!
+            URL.DownloadSource(self.history_list[self.history_idx]["digest"]),
             open(os.path.join(path, self.history_list[self.history_idx]["digest"] + ".zip"), "wb"), 1024
         )
         self.download_thread.sig_download_progress.connect(self.slot_progress_update)

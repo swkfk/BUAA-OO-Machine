@@ -8,15 +8,15 @@ class DownloadThread(QThread):
     def __init__(self, url, file_obj, buf_size):
         super().__init__()
         self.url = url
-        self.file_size: str = requests.get(self.url, stream=True).headers['Content-Length']
+        self.resp = requests.get(self.url, stream=True)
+        self.file_size: str = self.resp.headers['Content-Length']
         self.file_obj = file_obj
         self.buf_size = buf_size
 
     def run(self):
         try:
-            response = requests.get(self.url, stream=True)
             offset = 0
-            for chunk in response.iter_content(chunk_size=self.buf_size):
+            for chunk in self.resp.iter_content(chunk_size=self.buf_size):
                 self.file_obj.seek(offset)
                 self.file_obj.write(chunk)
                 offset += len(chunk)

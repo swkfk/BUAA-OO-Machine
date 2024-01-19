@@ -21,3 +21,7 @@ class URL:
     @staticmethod
     def PointList(user_name: str, proj_id: int, unit_id: int):
         return f"{URL.BaseUrl()}/point?user={user_name}&proj={proj_id}&unit={unit_id}"
+
+    @staticmethod
+    def DownloadSource(digest: str):
+        return f"{URL.BaseUrl()}/src?digest={digest}"
