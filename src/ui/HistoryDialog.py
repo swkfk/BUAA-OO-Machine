@@ -32,7 +32,7 @@ class HistoryDialog(QDialog):
         # Get the history list
         self.history_list = []
         self.history_idx = -1
-        GetHistoryList(self.user_name, self.update_history_cb)
+        self.update_history_cb(GetHistoryList(self.user_name))
 
         # Window Components
         self.m_btn_next = QPushButton(Strings.Pick.Next, self)
