@@ -125,7 +125,11 @@ class MainWidget(QWidget):
         HistoryDialog(self, self.user_name)
 
     def slot_update_proj(self):
-        self.proj_lst = reversed(GetProjList())
+        try:
+            self.proj_lst = reversed(GetProjList())
+        except Exception as e:
+            print(repr(e))
+            self.proj_lst = []
         self.m_combo_proj.clear()
         self.m_combo_proj.addItems(self.proj_lst)
 
