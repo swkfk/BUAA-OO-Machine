@@ -8,6 +8,10 @@ class Strings:
         BtnUser = "切换到临时用户"
         BtnTemp = "切换到普通用户"
 
+    class Server:
+        HintUrl = "服务器地址"
+        HintPort = "端口号"
+
     class Sync:
         Btn = "同步数据"
 

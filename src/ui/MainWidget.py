@@ -1,12 +1,13 @@
 import sys
 
 from PyQt6.QtCore import QSize, QRect, QCoreApplication, QProcess, Qt
-from PyQt6.QtWidgets import QWidget, QPushButton, QComboBox, QVBoxLayout, QScrollArea
+from PyQt6.QtWidgets import QWidget, QPushButton, QComboBox, QVBoxLayout, QScrollArea, QLineEdit
 
 from src.ui.PointArea import PointArea
 from src.ui.RegisterDialog import RegisterDialog
 from src.ui.HistoryDialog import HistoryDialog
 from src.core.settings import LocalAuthentic
+from src.core.settings.ServerConfig import server_config
 from src.core.requests.CheckPointList import GetProjList, GetUnitList, GetPointInfo
 from src.strings.MainWidget import Strings
 
@@ -19,6 +20,9 @@ class UI:
     UnitComboGeo = QRect(350, 20, 190, 30)
     SyncBtnGeo = QRect(560, 20, 100, 30)
     UploadDataBtnGeo = QRect(680, 20, 100, 30)
+
+    UrlInputGeo = QRect(140, 60, 330, 30)
+    PortInputGeo = QRect(480, 60, 60, 30)
 
     HistoryBtnGeo = QRect(560, 60, 100, 30)
     SubmitBtnGeo = QRect(680, 60, 100, 30)
@@ -69,6 +73,14 @@ class MainWidget(QWidget):
         self.m_btn_submit = QPushButton(Strings.Submit.Btn, self)
         self.m_btn_submit.setGeometry(UI.SubmitBtnGeo)
 
+        self.m_line_url = QLineEdit(server_config["url"], self)
+        self.m_line_url.setGeometry(UI.UrlInputGeo)
+        self.m_line_url.setPlaceholderText(Strings.Server.HintUrl)
+
+        self.m_line_port = QLineEdit(server_config["port"], self)
+        self.m_line_port.setGeometry(UI.PortInputGeo)
+        self.m_line_port.setPlaceholderText(Strings.Server.HintPort)
+
         self.m_widget_list_point = []
         self.m_widget_point = QWidget()
         self.m_layout_point = QVBoxLayout()
@@ -90,6 +102,8 @@ class MainWidget(QWidget):
         self.m_btn_user.clicked.connect(self.slot_user_mode_change)
         self.m_btn_history.clicked.connect(self.slot_view_history)
         self.m_btn_sync.clicked.connect(self.slot_update_proj)
+        self.m_line_url.textChanged.connect(self.slot_url_modify)
+        self.m_line_port.textChanged.connect(self.slot_port_modify)
         self.m_combo_proj.currentIndexChanged.connect(self.slot_update_unit)
         self.m_combo_unit.currentIndexChanged.connect(self.slot_update_point)
 
@@ -100,6 +114,12 @@ class MainWidget(QWidget):
         QCoreApplication.quit()
         status = QProcess.startDetached(sys.executable, sys.argv)
         sys.exit(0 if status[0] else 2)
+
+    def slot_url_modify(self):
+        server_config["url"] = self.m_line_url.text()
+
+    def slot_port_modify(self):
+        server_config["port"] = self.m_line_port.text()
 
     def slot_view_history(self):
         HistoryDialog(self, self.user_name)
