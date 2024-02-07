@@ -8,6 +8,7 @@ from src.strings.HistoryDialog import Strings
 from src.core.requests.HistoryView import GetHistoryList
 from src.core.requests.DownloadThread import DownloadThread
 from src.core.requests.RequestThread import RequestData
+from src.core.settings.FileSystemConfig import FileSystemConfig
 
 
 class UI:
@@ -24,6 +25,7 @@ class UI:
 class HistoryDialog(QDialog):
     def __init__(self, parent, user_name):
         super().__init__(parent)
+        self.config = FileSystemConfig()
         self.download_thread = None
         self.user_name = user_name
 
@@ -112,7 +114,7 @@ class HistoryDialog(QDialog):
 
     def slot_download_start(self):
         self.m_progress.setValue(0)
-        path = QFileDialog.getExistingDirectoryUrl(self, "", QUrl("./")).toLocalFile()
+        path = self.config.get_storage_path()
         if path == "":
             return
 

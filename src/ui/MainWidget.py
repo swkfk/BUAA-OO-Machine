@@ -12,6 +12,7 @@ from src.core.settings import LocalAuthentic
 from src.core.settings.ServerConfig import server_config
 from src.core.requests.CheckPointList import GetProjList, GetUnitList, GetPointInfo
 from src.strings.MainWidget import Strings
+from src.ui.SettingDialog import SettingDialog
 
 
 class UI:
@@ -22,6 +23,8 @@ class UI:
     UnitComboGeo = QRect(350, 20, 190, 30)
     SyncBtnGeo = QRect(560, 20, 100, 30)
     UploadDataBtnGeo = QRect(680, 20, 100, 30)
+
+    SettingBtnGeo = QRect(20, 60, 100, 30)
 
     UrlInputGeo = QRect(140, 60, 330, 30)
     PortInputGeo = QRect(480, 60, 60, 30)
@@ -68,6 +71,9 @@ class MainWidget(QMainWindow):
         self.m_btn_upload = QPushButton(Strings.UploadData.Btn, self)
         self.m_btn_upload.setGeometry(UI.UploadDataBtnGeo)
 
+        self.m_btn_setting = QPushButton(Strings.Setting.Btn, self)
+        self.m_btn_setting.setGeometry(UI.SettingBtnGeo)
+
         self.m_btn_history = QPushButton(Strings.History.Btn, self)
         self.m_btn_history.setGeometry(UI.HistoryBtnGeo)
         self.m_btn_history.setEnabled(not self.temp_mode)
@@ -103,6 +109,7 @@ class MainWidget(QMainWindow):
     def signal_bind(self):
         self.m_btn_user.clicked.connect(self.slot_user_mode_change)
         self.m_btn_history.clicked.connect(self.slot_view_history)
+        self.m_btn_setting.clicked.connect(self.slot_open_setting)
         self.m_btn_sync.clicked.connect(self.slot_update_proj)
         self.m_line_url.textChanged.connect(self.slot_url_modify)
         self.m_line_port.textChanged.connect(self.slot_port_modify)
@@ -125,6 +132,9 @@ class MainWidget(QMainWindow):
 
     def slot_view_history(self):
         HistoryDialog(self, self.user_name)
+
+    def slot_open_setting(self):
+        SettingDialog(self)
 
     def slot_update_proj(self):
         def aux(response: RequestData):

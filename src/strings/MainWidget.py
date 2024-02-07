@@ -23,3 +23,6 @@ class Strings:
 
     class Submit:
         Btn = "上传代码"
+
+    class Setting:
+        Btn = "设置"
