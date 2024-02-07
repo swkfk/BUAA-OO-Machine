@@ -1,12 +1,13 @@
 import os.path
 
 from PyQt6.QtCore import QSize, QRect, Qt, QUrl
-from PyQt6.QtWidgets import QDialog, QPushButton, QLabel, QProgressBar, QFileDialog
+from PyQt6.QtWidgets import QDialog, QPushButton, QLabel, QProgressBar, QFileDialog, QMessageBox
 
 from src.core.requests.UrlGenerator import URL
 from src.strings.HistoryDialog import Strings
 from src.core.requests.HistoryView import GetHistoryList
 from src.core.requests.DownloadThread import DownloadThread
+from src.core.requests.RequestThread import RequestData
 
 
 class UI:
@@ -33,7 +34,7 @@ class HistoryDialog(QDialog):
         # Get the history list
         self.history_list = []
         self.history_idx = -1
-        self.update_history_cb(GetHistoryList(self.user_name))
+        self.update_history()
 
         # Window Components
         self.m_btn_next = QPushButton(Strings.Pick.Next, self)
@@ -65,9 +66,17 @@ class HistoryDialog(QDialog):
         self.update_button_status()
         self.exec()
 
-    def update_history_cb(self, lst: [{str: str}]):
-        self.history_list = sorted(lst, key=lambda x: x["time"], reverse=True)
-        self.history_idx = 0 if len(lst) != 0 else -1
+    def update_history(self):
+        def aux(response: RequestData):
+            if response.status_code == 200:
+                lst = response.data
+                self.history_list = sorted(lst, key=lambda x: x["time"], reverse=True)
+                self.history_idx = 0 if len(lst) != 0 else -1
+            else:
+                QMessageBox.critical(self, "[History] Unhandled Error!", response.data["."])
+            self.update_button_status()
+
+        GetHistoryList(aux, self.user_name)
 
     def update_button_status(self):
         total = len(self.history_list)

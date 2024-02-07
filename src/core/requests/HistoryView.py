@@ -1,7 +1,6 @@
-
+from src.core.requests.CommonRequests import callback_handler as __handler
 from src.core.requests.UrlGenerator import URL
-from src.core.requests.CommonRequests import Get
 
 
-def GetHistoryList(user_name: str):
-    return Get(URL.HistoryView(user_name))
+def GetHistoryList(aux, user_name: str):
+    __handler(aux, URL.HistoryView(user_name))

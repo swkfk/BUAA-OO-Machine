@@ -1,8 +1,10 @@
 import sys
 
 from PyQt6.QtCore import QSize, QRect, QCoreApplication, QProcess, Qt
-from PyQt6.QtWidgets import QWidget, QPushButton, QComboBox, QVBoxLayout, QScrollArea, QLineEdit
+from PyQt6.QtWidgets import QWidget, QPushButton, QComboBox, QVBoxLayout, QScrollArea, QLineEdit, QMainWindow, \
+    QMessageBox
 
+from src.core.requests.RequestThread import RequestData
 from src.ui.PointArea import PointArea
 from src.ui.RegisterDialog import RegisterDialog
 from src.ui.HistoryDialog import HistoryDialog
@@ -34,7 +36,7 @@ class UI:
         return QSize(740, 80 * c)
 
 
-class MainWidget(QWidget):
+class MainWidget(QMainWindow):
     def __init__(self):
         super(MainWidget, self).__init__()
 
@@ -125,38 +127,60 @@ class MainWidget(QWidget):
         HistoryDialog(self, self.user_name)
 
     def slot_update_proj(self):
-        try:
-            self.proj_lst = reversed(GetProjList())
-        except Exception as e:
-            print(repr(e))
-            self.proj_lst = []
-        self.m_combo_proj.clear()
-        self.m_combo_proj.addItems(self.proj_lst)
+        def aux(response: RequestData):
+            if response.status_code == 200:
+                self.proj_lst = reversed(response.data)
+            elif response.status_code == 0:
+                self.proj_lst = []
+                QMessageBox.critical(self, "[Projects] Connect Timeout!", response.data["."])
+            else:
+                self.proj_lst = []
+                QMessageBox.critical(self, "[Projects] Unhandled Error!", response.data["."])
+            self.m_combo_proj.clear()
+            self.m_combo_proj.addItems(self.proj_lst)
+
+        GetProjList(aux)
 
     def slot_update_unit(self):
+        def aux(response: RequestData):
+            if response.status_code == 200:
+                self.unit_lst = reversed(response.data)
+            else:
+                self.unit_lst = []
+                QMessageBox.critical(self, "[Units] Unhandled Error!", response.data["."])
+            self.m_combo_unit.clear()
+            self.m_combo_unit.addItems(self.unit_lst)
+
         if self.m_combo_proj.count() == 0:
             return
-        self.unit_lst = reversed(GetUnitList(self.m_combo_proj.count() - self.m_combo_proj.currentIndex() - 1))
-        self.m_combo_unit.clear()
-        self.m_combo_unit.addItems(self.unit_lst)
+        GetUnitList(aux, self.m_combo_proj.count() - self.m_combo_proj.currentIndex() - 1)
 
     def slot_update_point(self):
+        def aux(response: RequestData):
+            if response.status_code == 200:
+                self.point_lst = reversed(response.data)
+            else:
+                self.point_lst = []
+                QMessageBox.critical(self, "[Points] Unhandled Error!", response.data["."])
+
+            self.m_widget_list_point.clear()
+            while self.m_layout_point.count() > 0:
+                w = self.m_layout_point.takeAt(0).widget()
+                self.m_layout_point.removeWidget(w)
+                w.deleteLater()
+
+            for idx, point in enumerate(self.point_lst):
+                self.m_widget_list_point.append(PointArea(idx, point["same"], point["diff"]))
+            for widget in self.m_widget_list_point:
+                self.m_layout_point.addWidget(widget)
+            self.m_widget_point.resize(UI.ScrollWidgetSize(len(self.m_widget_list_point)))
+            self.m_widget_point.setLayout(self.m_layout_point)
+            self.m_scroll_point.setWidget(self.m_widget_point)
+
         if self.m_combo_unit.count() == 0:
             return
-        self.point_lst = GetPointInfo(self.user_name if not self.temp_mode else "__TEST__",
-                                      self.m_combo_proj.count() - self.m_combo_proj.currentIndex() - 1,
-                                      self.m_combo_unit.count() - self.m_combo_unit.currentIndex() - 1)
-
-        self.m_widget_list_point.clear()
-        while self.m_layout_point.count() > 0:
-            w = self.m_layout_point.takeAt(0).widget()
-            self.m_layout_point.removeWidget(w)
-            w.deleteLater()
-
-        for idx, point in enumerate(self.point_lst):
-            self.m_widget_list_point.append(PointArea(idx, point["same"], point["diff"]))
-        for widget in self.m_widget_list_point:
-            self.m_layout_point.addWidget(widget)
-        self.m_widget_point.resize(UI.ScrollWidgetSize(len(self.m_widget_list_point)))
-        self.m_widget_point.setLayout(self.m_layout_point)
-        self.m_scroll_point.setWidget(self.m_widget_point)
+        GetPointInfo(aux,
+                     self.user_name if not self.temp_mode else "__TEST__",
+                     self.m_combo_proj.count() - self.m_combo_proj.currentIndex() - 1,
+                     self.m_combo_unit.count() - self.m_combo_unit.currentIndex() - 1
+                     )

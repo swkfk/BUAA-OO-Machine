@@ -1,9 +1,10 @@
-import requests
+from src.core.requests.RequestThread import RequestThread
+
+lst = []  # An Expedient Solution
 
 
-def Get(url: str):
-    print(url)
-    r = requests.get(url)
-    if r.status_code != 200:
-        return None
-    return r.json()
+def callback_handler(aux, *args, **kwargs):
+    th = RequestThread(*args, **kwargs)
+    lst.append(th)
+    th.sig_request_response.connect(aux)
+    th.start()
