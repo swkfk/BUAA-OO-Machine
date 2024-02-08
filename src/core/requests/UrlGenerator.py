@@ -25,3 +25,7 @@ class URL:
     @staticmethod
     def DownloadSource(digest: str):
         return f"{URL.BaseUrl()}/src?digest={digest}"
+
+    @staticmethod
+    def ConnTest():
+        return f"{URL.BaseUrl()}/"

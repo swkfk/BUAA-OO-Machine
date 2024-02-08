@@ -46,6 +46,7 @@ class MainWidget(QMainWindow):
         self.user = LocalAuthentic.User()
         if self.user.status() == self.user.UserStatus.NONE:
             RegisterDialog(self, self.user.create_user)
+            SettingDialog(self)
 
         self.user_name = self.user.user_name()
         self.temp_mode = self.user.temp_mode()
@@ -81,13 +82,13 @@ class MainWidget(QMainWindow):
         self.m_btn_submit = QPushButton(Strings.Submit.Btn, self)
         self.m_btn_submit.setGeometry(UI.SubmitBtnGeo)
 
-        self.m_line_url = QLineEdit(server_config["url"], self)
-        self.m_line_url.setGeometry(UI.UrlInputGeo)
-        self.m_line_url.setPlaceholderText(Strings.Server.HintUrl)
-
-        self.m_line_port = QLineEdit(server_config["port"], self)
-        self.m_line_port.setGeometry(UI.PortInputGeo)
-        self.m_line_port.setPlaceholderText(Strings.Server.HintPort)
+        # self.m_line_url = QLineEdit(server_config["url"], self)
+        # self.m_line_url.setGeometry(UI.UrlInputGeo)
+        # self.m_line_url.setPlaceholderText(Strings.Server.HintUrl)
+        #
+        # self.m_line_port = QLineEdit(server_config["port"], self)
+        # self.m_line_port.setGeometry(UI.PortInputGeo)
+        # self.m_line_port.setPlaceholderText(Strings.Server.HintPort)
 
         self.m_widget_list_point = []
         self.m_widget_point = QWidget()
@@ -113,8 +114,6 @@ class MainWidget(QMainWindow):
         self.m_btn_history.clicked.connect(self.slot_view_history)
         self.m_btn_setting.clicked.connect(self.slot_open_setting)
         self.m_btn_sync.clicked.connect(self.slot_update_proj)
-        self.m_line_url.textChanged.connect(self.slot_url_modify)
-        self.m_line_port.textChanged.connect(self.slot_port_modify)
         self.m_combo_proj.currentIndexChanged.connect(self.slot_update_unit)
         self.m_combo_unit.currentIndexChanged.connect(self.slot_update_point)
 
@@ -125,12 +124,6 @@ class MainWidget(QMainWindow):
         QCoreApplication.quit()
         status = QProcess.startDetached(sys.executable, sys.argv)
         sys.exit(0 if status[0] else 2)
-
-    def slot_url_modify(self):
-        server_config["url"] = self.m_line_url.text()
-
-    def slot_port_modify(self):
-        server_config["port"] = self.m_line_port.text()
 
     def slot_view_history(self):
         HistoryDialog(self, self.user_name)

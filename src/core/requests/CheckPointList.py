@@ -12,3 +12,7 @@ def GetUnitList(aux, proj_id: int):
 
 def GetPointInfo(aux, user_name: str, proj_id: int, unit_id: int):
     __handler(aux, URL.PointList(user_name, proj_id, unit_id))
+
+
+def ConnectTest(aux):
+    __handler(aux, URL.ConnTest())
