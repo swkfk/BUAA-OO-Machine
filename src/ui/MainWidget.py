@@ -4,7 +4,9 @@ from PyQt6.QtCore import QSize, QRect, QCoreApplication, QProcess, Qt
 from PyQt6.QtWidgets import QWidget, QPushButton, QComboBox, QVBoxLayout, QScrollArea, QLineEdit, QMainWindow, \
     QMessageBox
 
+from src.core.fs.Zip import compress
 from src.core.requests.RequestThread import RequestData
+from src.core.settings.FileSystemConfig import FileSystemConfig
 from src.ui.PointArea import PointArea
 from src.ui.RegisterDialog import RegisterDialog
 from src.ui.HistoryDialog import HistoryDialog
@@ -114,6 +116,7 @@ class MainWidget(QMainWindow):
         self.m_btn_sync.clicked.connect(self.slot_update_proj)
         self.m_combo_proj.currentIndexChanged.connect(self.slot_update_unit)
         self.m_combo_unit.currentIndexChanged.connect(self.slot_update_point)
+        self.m_btn_submit.clicked.connect(self.slot_submit)
 
     def slot_user_mode_change(self):
         self.user.trigger_temp()
@@ -193,6 +196,11 @@ class MainWidget(QMainWindow):
                      self.m_combo_proj.count() - self.m_combo_proj.currentIndex() - 1,
                      self.m_combo_unit.count() - self.m_combo_unit.currentIndex() - 1
                      )
+
+    def slot_submit(self):
+        file_obj = compress(FileSystemConfig().get_src_path())
+        # print(file_obj.obj().name)
+        # TODO ///
 
     def status_ready(self):
         self.statusBar().showMessage(Strings.Status.Ready, 0)
