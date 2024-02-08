@@ -108,6 +108,7 @@ class SettingDialog(QDialog):
                 hint = response.data
             self.m_label_test.setText(Strings.ConnectionSetting.Label.format(response.status_code, hint))
 
+        self.m_label_test.setText(Strings.ConnectionSetting.Testing)
         ConnectTest(aux)
 
     def get_path(self):

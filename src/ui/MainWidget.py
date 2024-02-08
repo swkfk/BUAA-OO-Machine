@@ -16,27 +16,25 @@ from src.ui.SettingDialog import SettingDialog
 
 
 class UI:
-    WindowSize = QSize(800, 600)
+    WindowSize = QSize(590, 500)
 
     UserBtnGeo = QRect(20, 20, 100, 30)
-    ProjComboGeo = QRect(140, 20, 190, 30)
-    UnitComboGeo = QRect(350, 20, 190, 30)
-    SyncBtnGeo = QRect(560, 20, 100, 30)
-    UploadDataBtnGeo = QRect(680, 20, 100, 30)
-
     SettingBtnGeo = QRect(20, 60, 100, 30)
 
-    UrlInputGeo = QRect(140, 60, 330, 30)
-    PortInputGeo = QRect(480, 60, 60, 30)
+    ProjComboGeo = QRect(140, 20, 190, 30)
+    UnitComboGeo = QRect(140, 60, 190, 30)
 
-    HistoryBtnGeo = QRect(560, 60, 100, 30)
-    SubmitBtnGeo = QRect(680, 60, 100, 30)
+    SyncBtnGeo = QRect(350, 20, 100, 30)
+    UploadDataBtnGeo = QRect(470, 20, 100, 30)
 
-    ScrollAreaGeo = QRect(20, 110, 760, 460)
+    HistoryBtnGeo = QRect(350, 60, 100, 30)
+    SubmitBtnGeo = QRect(470, 60, 100, 30)
+
+    ScrollAreaGeo = QRect(20, 110, 550, 360)
 
     @staticmethod
     def ScrollWidgetSize(c):
-        return QSize(740, 80 * c)
+        return QSize(530, 80 * c)
 
 
 class MainWidget(QMainWindow):

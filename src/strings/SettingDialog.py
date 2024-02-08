@@ -16,4 +16,5 @@ class Strings:
         TestBtn = "测试连接..."
         UrlHolder = "地址"
         PortHolder = "端口号"
-        Label = "{}...{}"
+        Label = "{}... {}"
+        Testing = "Connecting..."
