@@ -95,6 +95,8 @@ class MainWidget(QMainWindow):
         self.m_scroll_point = QScrollArea(self)
         self.m_scroll_point.setGeometry(UI.ScrollAreaGeo)
 
+        self.status_ready()
+
         # Signals and Slots binding
         self.signal_bind()
 
@@ -138,6 +140,7 @@ class MainWidget(QMainWindow):
 
     def slot_update_proj(self):
         def aux(response: RequestData):
+            self.status_ready()
             if response.status_code == 200:
                 self.proj_lst = reversed(response.data)
             elif response.status_code == 0:
@@ -149,10 +152,12 @@ class MainWidget(QMainWindow):
             self.m_combo_proj.clear()
             self.m_combo_proj.addItems(self.proj_lst)
 
+        self.status_busy(Strings.Status.BusyUpdateProject)
         GetProjList(aux)
 
     def slot_update_unit(self):
         def aux(response: RequestData):
+            self.status_ready()
             if response.status_code == 200:
                 self.unit_lst = reversed(response.data)
             else:
@@ -163,10 +168,12 @@ class MainWidget(QMainWindow):
 
         if self.m_combo_proj.count() == 0:
             return
+        self.status_busy(Strings.Status.BusyUpdateUnit)
         GetUnitList(aux, self.m_combo_proj.count() - self.m_combo_proj.currentIndex() - 1)
 
     def slot_update_point(self):
         def aux(response: RequestData):
+            self.status_ready()
             if response.status_code == 200:
                 self.point_lst = reversed(response.data)
             else:
@@ -189,8 +196,15 @@ class MainWidget(QMainWindow):
 
         if self.m_combo_unit.count() == 0:
             return
+        self.status_busy(Strings.Status.BusyUpdatePoint)
         GetPointInfo(aux,
                      self.user_name if not self.temp_mode else "__TEST__",
                      self.m_combo_proj.count() - self.m_combo_proj.currentIndex() - 1,
                      self.m_combo_unit.count() - self.m_combo_unit.currentIndex() - 1
                      )
+
+    def status_ready(self):
+        self.statusBar().showMessage(Strings.Status.Ready, 0)
+
+    def status_busy(self, s: str):
+        self.statusBar().showMessage(s, 0)

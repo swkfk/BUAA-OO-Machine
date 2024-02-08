@@ -13,3 +13,6 @@ class Strings:
 
     class Download:
         Text = "下载源代码"
+
+    class Status:
+        BusyUpdateHistory = "更新提交记录 ..."

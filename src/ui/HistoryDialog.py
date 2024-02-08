@@ -25,6 +25,8 @@ class UI:
 class HistoryDialog(QDialog):
     def __init__(self, parent, user_name):
         super().__init__(parent)
+        self.status_ready = parent.status_ready
+        self.status_busy = parent.status_busy
         self.config = FileSystemConfig()
         self.download_thread = None
         self.user_name = user_name
@@ -70,6 +72,7 @@ class HistoryDialog(QDialog):
 
     def update_history(self):
         def aux(response: RequestData):
+            self.status_ready()
             if response.status_code == 200:
                 lst = response.data
                 self.history_list = sorted(lst, key=lambda x: x["time"], reverse=True)
@@ -78,6 +81,7 @@ class HistoryDialog(QDialog):
                 QMessageBox.critical(self, "[History] Unhandled Error!", response.data["."])
             self.update_button_status()
 
+        self.status_busy(Strings.Status.BusyUpdateHistory)
         GetHistoryList(aux, self.user_name)
 
     def update_button_status(self):

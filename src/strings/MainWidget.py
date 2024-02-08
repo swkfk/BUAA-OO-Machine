@@ -26,3 +26,9 @@ class Strings:
 
     class Setting:
         Btn = "设置"
+
+    class Status:
+        Ready = "就绪!"
+        BusyUpdateProject = "读取 Project 列表 ..."
+        BusyUpdateUnit = "读取 Unit 列表 ..."
+        BusyUpdatePoint = "读取 Point 列表 ..."
