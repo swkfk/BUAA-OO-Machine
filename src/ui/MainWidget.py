@@ -1,17 +1,13 @@
 import sys
 
-from PyQt6.QtCore import QSize, QRect, QCoreApplication, QProcess, Qt
-from PyQt6.QtWidgets import QWidget, QPushButton, QComboBox, QVBoxLayout, QScrollArea, QLineEdit, QMainWindow, \
-    QMessageBox
+from PyQt6.QtCore import QSize, QRect, QCoreApplication, QProcess
+from PyQt6.QtWidgets import QWidget, QPushButton, QComboBox, QVBoxLayout, QScrollArea, QMainWindow, QMessageBox
 
-from src.core.fs.Zip import compress
 from src.core.requests.RequestThread import RequestData
-from src.core.settings.FileSystemConfig import FileSystemConfig
 from src.ui.PointArea import PointArea
 from src.ui.RegisterDialog import RegisterDialog
 from src.ui.HistoryDialog import HistoryDialog
 from src.core.settings import LocalAuthentic
-from src.core.settings.ServerConfig import server_config
 from src.core.requests.CheckPointList import GetProjList, GetUnitList, GetPointInfo
 from src.strings.MainWidget import Strings
 from src.ui.SettingDialog import SettingDialog
@@ -82,14 +78,6 @@ class MainWidget(QMainWindow):
 
         self.m_btn_submit = QPushButton(Strings.Submit.Btn, self)
         self.m_btn_submit.setGeometry(UI.SubmitBtnGeo)
-
-        # self.m_line_url = QLineEdit(server_config["url"], self)
-        # self.m_line_url.setGeometry(UI.UrlInputGeo)
-        # self.m_line_url.setPlaceholderText(Strings.Server.HintUrl)
-        #
-        # self.m_line_port = QLineEdit(server_config["port"], self)
-        # self.m_line_port.setGeometry(UI.PortInputGeo)
-        # self.m_line_port.setPlaceholderText(Strings.Server.HintPort)
 
         self.m_widget_list_point = []
         self.m_widget_point = QWidget()

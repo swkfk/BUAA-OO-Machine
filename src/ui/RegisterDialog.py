@@ -1,5 +1,5 @@
 from PyQt6.QtCore import QSize, QRect, Qt
-from PyQt6.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QApplication, QStyle
+from PyQt6.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton
 
 from src.strings.RegisterDialog import Strings
 
@@ -28,10 +28,6 @@ class RegisterDialog(QDialog):
         self.m_input = QLineEdit(self)
         self.m_input.setGeometry(UI.InputBoxGeo)
         self.m_input.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # self.m_btn_input = QLabel(self)
-        # style = QApplication.style()
-        # self.m_btn_input.setPixmap(style.standardPixmap(style.StandardPixmap.SP_ArrowForward).scaled(32, 32))
 
         self.m_btn_input = QPushButton(Strings.Input.Button, self)
         self.m_btn_input.setGeometry(UI.InputButtonGeo)

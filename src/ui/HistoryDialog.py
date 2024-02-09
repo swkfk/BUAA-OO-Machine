@@ -1,7 +1,7 @@
 import os.path
 
-from PyQt6.QtCore import QSize, QRect, Qt, QUrl
-from PyQt6.QtWidgets import QDialog, QPushButton, QLabel, QProgressBar, QFileDialog, QMessageBox
+from PyQt6.QtCore import QSize, QRect, Qt
+from PyQt6.QtWidgets import QDialog, QPushButton, QLabel, QProgressBar, QMessageBox
 
 from src.core.requests.UrlGenerator import URL
 from src.strings.HistoryDialog import Strings
