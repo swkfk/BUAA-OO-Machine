@@ -1,6 +1,11 @@
-from PyQt6.QtCore import QRect, QSize, Qt
-from PyQt6.QtWidgets import QWidget, QLabel, QPushButton
+import os
 
+from PyQt6.QtCore import QRect, QSize, Qt
+from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QMessageBox
+
+from src.core.requests.DownloadThread import DownloadThread
+from src.core.requests.UrlGenerator import URL
+from src.core.settings.FileSystemConfig import FileSystemConfig
 from src.strings.PointArea import Strings
 
 
@@ -16,8 +21,14 @@ class UI:
 
 
 class PointArea(QWidget):
-    def __init__(self, idx, same_lst, diff_lst):
+    def __init__(self, idx, same_lst, diff_lst, user: str, proj: int, unit: int, status_fn):
         super().__init__()
+
+        self.download_thread = None
+        self.config = FileSystemConfig()
+
+        self.user, self.proj, self.unit, self.point = user, proj, unit, idx
+        self.status_ready, self.status_busy = status_fn
 
         self.setFixedSize(UI.Size)
         self.setAttribute(Qt.WidgetAttribute.WA_AlwaysShowToolTips)
@@ -42,3 +53,30 @@ class PointArea(QWidget):
         self.m_btn_others = QPushButton(Strings.Download.Others, self)
         self.m_btn_others.setGeometry(UI.BtnOtherGeo)
 
+        self.m_btn_input.clicked.connect(self.slot_common_download("input"))
+        self.m_btn_output.clicked.connect(self.slot_common_download("output"))
+        self.m_btn_others.clicked.connect(self.slot_common_download("all"))
+
+    def slot_common_download(self, scope):
+        def aux():
+            self.status_busy(Strings.Bar.Download)
+
+            path = self.config.get_storage_path()
+            if path == "":
+                return
+            url = URL.DownloadInout(scope, self.user, self.proj, self.unit, self.point)
+            suffix = "zip" if scope == "all" else "txt"
+            path = os.path.join(
+                path, f"{self.user}$P{self.proj}$U{self.unit}$Test_{self.point}_{scope}.{suffix}"
+            )
+
+            self.download_thread = DownloadThread(url, open(path, "wb"), 1024)
+
+            def download_down():
+                self.status_ready()
+                QMessageBox.information(self, Strings.MsgBox.Title, Strings.MsgBox.Content.format(path))
+
+            self.download_thread.sig_download_over.connect(download_down)
+            self.download_thread.start()
+
+        return aux

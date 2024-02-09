@@ -37,3 +37,7 @@ class URL:
     @staticmethod
     def Submit(user: str, proj: int, unit: int):
         return f"{URL.BaseUrl()}/submit?user={user}&proj={proj}&unit={unit}"
+
+    @staticmethod
+    def DownloadInout(scope: str, user: str, proj: int, unit: int, point: int):
+        return f"{URL.BaseUrl()}/{scope}?user={user}&proj={proj}&unit={unit}&point={point}"

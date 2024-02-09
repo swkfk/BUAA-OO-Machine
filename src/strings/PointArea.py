@@ -13,3 +13,10 @@ class Strings:
         Output = "保存 Stdout"
         Others = "保存其他人的 Stdout"
 
+    class Bar:
+        Download = "正在下载 ..."
+        Ready = "就绪！"
+
+    class MsgBox:
+        Title = "下载完成"
+        Content = "文件保存：{}"

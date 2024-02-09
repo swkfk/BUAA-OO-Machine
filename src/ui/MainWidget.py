@@ -191,9 +191,13 @@ class MainWidget(QMainWindow):
                 w.deleteLater()
 
             for idx, point in enumerate(self.point_lst):
-                self.m_widget_list_point.append(PointArea(idx, point["same"], point["diff"]))
-            for widget in self.m_widget_list_point:
-                self.m_layout_point.addWidget(widget)
+                pa = PointArea(
+                    idx, point["same"], point["diff"],
+                    self.real_user(), self.proj_id(), self.unit_id(),
+                    (self.status_ready, self.status_busy)
+                )
+                self.m_widget_list_point.append(pa)
+                self.m_layout_point.addWidget(pa)
             self.m_widget_point.resize(UI.ScrollWidgetSize(len(self.m_widget_list_point)))
             self.m_widget_point.setLayout(self.m_layout_point)
             self.m_scroll_point.setWidget(self.m_widget_point)
