@@ -29,3 +29,11 @@ class URL:
     @staticmethod
     def ConnTest():
         return f"{URL.BaseUrl()}/"
+
+    @staticmethod
+    def Status(digest: str):
+        return f"{URL.BaseUrl()}/status?digest={digest}"
+
+    @staticmethod
+    def Submit(user: str, proj: int, unit: int):
+        return f"{URL.BaseUrl()}/submit?user={user}&proj={proj}&unit={unit}"

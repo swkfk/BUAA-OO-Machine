@@ -15,5 +15,7 @@ def compress(path: str) -> TempFile:
     zf = ZipFile(tf.obj(), "w")
     for file in paths:
         zf.write(file, arcname=os.path.relpath(file, path))
+    zf.close()
+    tf.obj().seek(os.SEEK_SET)
 
     return tf

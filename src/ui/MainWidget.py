@@ -15,6 +15,7 @@ from src.core.settings.ServerConfig import server_config
 from src.core.requests.CheckPointList import GetProjList, GetUnitList, GetPointInfo
 from src.strings.MainWidget import Strings
 from src.ui.SettingDialog import SettingDialog
+from src.ui.SubmitDialog import SubmitDialog
 
 
 class UI:
@@ -118,6 +119,15 @@ class MainWidget(QMainWindow):
         self.m_combo_unit.currentIndexChanged.connect(self.slot_update_point)
         self.m_btn_submit.clicked.connect(self.slot_submit)
 
+    def real_user(self):
+        return self.user_name if not self.temp_mode else "__TEST__"
+
+    def proj_id(self):
+        return self.m_combo_proj.count() - self.m_combo_proj.currentIndex() - 1
+
+    def unit_id(self):
+        return self.m_combo_unit.count() - self.m_combo_unit.currentIndex() - 1
+
     def slot_user_mode_change(self):
         self.user.trigger_temp()
 
@@ -163,7 +173,7 @@ class MainWidget(QMainWindow):
         if self.m_combo_proj.count() == 0:
             return
         self.status_busy(Strings.Status.BusyUpdateUnit)
-        GetUnitList(aux, self.m_combo_proj.count() - self.m_combo_proj.currentIndex() - 1)
+        GetUnitList(aux, self.proj_id())
 
     def slot_update_point(self):
         def aux(response: RequestData):
@@ -191,16 +201,10 @@ class MainWidget(QMainWindow):
         if self.m_combo_unit.count() == 0:
             return
         self.status_busy(Strings.Status.BusyUpdatePoint)
-        GetPointInfo(aux,
-                     self.user_name if not self.temp_mode else "__TEST__",
-                     self.m_combo_proj.count() - self.m_combo_proj.currentIndex() - 1,
-                     self.m_combo_unit.count() - self.m_combo_unit.currentIndex() - 1
-                     )
+        GetPointInfo(aux, self.real_user(), self.proj_id(), self.unit_id())
 
     def slot_submit(self):
-        file_obj = compress(FileSystemConfig().get_src_path())
-        # print(file_obj.obj().name)
-        # TODO ///
+        SubmitDialog(self, self.real_user(), self.proj_id(), self.unit_id())
 
     def status_ready(self):
         self.statusBar().showMessage(Strings.Status.Ready, 0)
