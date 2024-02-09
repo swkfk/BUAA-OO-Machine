@@ -44,21 +44,22 @@ class PointArea(QWidget):
         self.m_label_diff.setGeometry(UI.DiffGeo)
         self.m_label_diff.setToolTip(Strings.Widget.ToolTip(diff_lst))
 
-        self.m_btn_input = QPushButton(Strings.Download.Input, self)
-        self.m_btn_input.setGeometry(UI.BtnInGeo)
+        self.m_btn_dict: {str, QPushButton} = {
+            "input": QPushButton(Strings.Download.Input, self),
+            "output": QPushButton(Strings.Download.Output, self),
+            "all": QPushButton(Strings.Download.Others, self)
+        }
 
-        self.m_btn_output = QPushButton(Strings.Download.Output, self)
-        self.m_btn_output.setGeometry(UI.BtnOutGeo)
+        self.m_btn_dict["input"].setGeometry(UI.BtnInGeo)
+        self.m_btn_dict["output"].setGeometry(UI.BtnOutGeo)
+        self.m_btn_dict["all"].setGeometry(UI.BtnOtherGeo)
 
-        self.m_btn_others = QPushButton(Strings.Download.Others, self)
-        self.m_btn_others.setGeometry(UI.BtnOtherGeo)
+        for scope in ["input", "output", "all"]:
+            self.m_btn_dict[scope].clicked.connect(self.slot_common_download(scope))
 
-        self.m_btn_input.clicked.connect(self.slot_common_download("input"))
-        self.m_btn_output.clicked.connect(self.slot_common_download("output"))
-        self.m_btn_others.clicked.connect(self.slot_common_download("all"))
-
-    def slot_common_download(self, scope):
+    def slot_common_download(self, scope: str):
         def aux():
+            self.m_btn_dict[scope].setText(Strings.Bar.Download)
             self.status_busy(Strings.Bar.Download)
 
             path = self.config.get_storage_path()
@@ -73,6 +74,7 @@ class PointArea(QWidget):
             self.download_thread = DownloadThread(url, open(path, "wb"), 1024)
 
             def download_down():
+                self.m_btn_dict[scope].setText(Strings.Download.Dict[scope])
                 self.status_ready()
                 QMessageBox.information(self, Strings.MsgBox.Title, Strings.MsgBox.Content.format(path))
 

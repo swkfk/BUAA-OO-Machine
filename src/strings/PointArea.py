@@ -13,6 +13,12 @@ class Strings:
         Output = "保存 Stdout"
         Others = "保存其他人的 Stdout"
 
+        Dict = {
+            "input": Input,
+            "output": Output,
+            "all": Others
+        }
+
     class Bar:
         Download = "正在下载 ..."
         Ready = "就绪！"
