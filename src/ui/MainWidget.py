@@ -1,7 +1,8 @@
 import sys
 
 from PyQt6.QtCore import QSize, QRect, QCoreApplication, QProcess
-from PyQt6.QtWidgets import QWidget, QPushButton, QComboBox, QVBoxLayout, QScrollArea, QMainWindow, QMessageBox
+from PyQt6.QtWidgets import QWidget, QPushButton, QComboBox, QVBoxLayout, QScrollArea, QMainWindow, QMessageBox, \
+    QGridLayout
 
 from src.core.requests.RequestThread import RequestData
 from src.ui.PointArea import PointArea
@@ -17,19 +18,9 @@ from src.ui.SubmitDialog import SubmitDialog
 class UI:
     WindowSize = QSize(590, 500)
 
-    UserBtnGeo = QRect(20, 20, 100, 30)
-    SettingBtnGeo = QRect(20, 60, 100, 30)
+    BtnWidgetGeo = QRect(10, 0, 570, 90)
 
-    ProjComboGeo = QRect(140, 20, 190, 30)
-    UnitComboGeo = QRect(140, 60, 190, 30)
-
-    SyncBtnGeo = QRect(350, 20, 100, 30)
-    UploadDataBtnGeo = QRect(470, 20, 100, 30)
-
-    HistoryBtnGeo = QRect(350, 60, 100, 30)
-    SubmitBtnGeo = QRect(470, 60, 100, 30)
-
-    ScrollAreaGeo = QRect(20, 110, 550, 360)
+    ScrollAreaGeo = QRect(20, 90, 550, 380)
 
     @staticmethod
     def ScrollWidgetSize(c):
@@ -53,31 +44,40 @@ class MainWidget(QMainWindow):
         self.setFixedSize(UI.WindowSize)
 
         # Component declaration
+        self.m_widget_btn = QWidget(self)
+        self.m_widget_btn.setGeometry(UI.BtnWidgetGeo)
+
+        self.m_grid_btn = QGridLayout()
+        for c, s in [(0, 1), (1, 2), (2, 1), (3, 1)]:
+            self.m_grid_btn.setColumnStretch(c, s)
+
         self.m_btn_user = QPushButton(self)
         self.m_btn_user.setText(Strings.UserMode.BtnTemp if self.temp_mode else Strings.UserMode.BtnUser)
-        self.m_btn_user.setGeometry(UI.UserBtnGeo)
+        self.m_grid_btn.addWidget(self.m_btn_user)
 
         self.m_combo_proj = QComboBox(self)
-        self.m_combo_proj.setGeometry(UI.ProjComboGeo)
-
-        self.m_combo_unit = QComboBox(self)
-        self.m_combo_unit.setGeometry(UI.UnitComboGeo)
+        self.m_grid_btn.addWidget(self.m_combo_proj)
 
         self.m_btn_sync = QPushButton(Strings.Sync.Btn, self)
-        self.m_btn_sync.setGeometry(UI.SyncBtnGeo)
+        self.m_grid_btn.addWidget(self.m_btn_sync)
 
         self.m_btn_upload = QPushButton(Strings.UploadData.Btn, self)
-        self.m_btn_upload.setGeometry(UI.UploadDataBtnGeo)
+        self.m_grid_btn.addWidget(self.m_btn_upload)
 
         self.m_btn_setting = QPushButton(Strings.Setting.Btn, self)
-        self.m_btn_setting.setGeometry(UI.SettingBtnGeo)
+        self.m_grid_btn.addWidget(self.m_btn_setting)
+
+        self.m_combo_unit = QComboBox(self)
+        self.m_grid_btn.addWidget(self.m_combo_unit)
 
         self.m_btn_history = QPushButton(Strings.History.Btn, self)
-        self.m_btn_history.setGeometry(UI.HistoryBtnGeo)
+        self.m_grid_btn.addWidget(self.m_btn_history)
         self.m_btn_history.setEnabled(not self.temp_mode)
 
         self.m_btn_submit = QPushButton(Strings.Submit.Btn, self)
-        self.m_btn_submit.setGeometry(UI.SubmitBtnGeo)
+        self.m_grid_btn.addWidget(self.m_btn_submit)
+
+        self.m_widget_btn.setLayout(self.m_grid_btn)
 
         self.m_widget_list_point = []
         self.m_widget_point = QWidget()
