@@ -15,9 +15,9 @@ class UI:
     SameGeo = QRect(0, 30, 100, 30)
     DiffGeo = QRect(100, 30, 100, 30)
 
-    BtnInGeo = QRect(200, 0, 80, 30)
-    BtnOutGeo = QRect(280, 0, 80, 30)
-    BtnOtherGeo = QRect(200, 30, 160, 30)
+    BtnInGeo = QRect(206, 3, 75, 24)
+    BtnOutGeo = QRect(289, 3, 75, 24)
+    BtnOtherGeo = QRect(206, 33, 158, 24)
 
 
 class PointArea(QWidget):

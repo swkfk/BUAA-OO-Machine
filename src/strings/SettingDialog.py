@@ -18,3 +18,9 @@ class Strings:
         PortHolder = "端口号"
         Label = "{}... {}"
         Testing = "Connecting..."
+
+    class SystemConfig:
+        Title = "系统配置"
+        ThemeBtn = "颜色主题"
+        ThemeDark = "深色"
+        ThemeLight = "浅色"

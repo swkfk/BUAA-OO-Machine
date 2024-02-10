@@ -1,10 +1,12 @@
 import sys
 
+import qdarkstyle
 from PyQt6.QtCore import QSize, QRect, QCoreApplication, QProcess
 from PyQt6.QtWidgets import QWidget, QPushButton, QComboBox, QVBoxLayout, QScrollArea, QMainWindow, QMessageBox, \
     QGridLayout
 
 from src.core.requests.RequestThread import RequestData
+from src.core.settings.SystemConfig import get_theme
 from src.ui.PointArea import PointArea
 from src.ui.RegisterDialog import RegisterDialog
 from src.ui.HistoryDialog import HistoryDialog
@@ -42,6 +44,8 @@ class MainWidget(QMainWindow):
         self.setWindowTitle(Strings.Window.Title + self.user_name +
                             (Strings.Window.TempTitle if self.temp_mode else ""))
         self.setFixedSize(UI.WindowSize)
+
+        self.setStyleSheet(get_theme())
 
         # Component declaration
         self.m_widget_btn = QWidget(self)
@@ -128,7 +132,9 @@ class MainWidget(QMainWindow):
         HistoryDialog(self, self.user_name)
 
     def slot_open_setting(self):
-        SettingDialog(self)
+        sd = SettingDialog(self)
+        sd.sig_theme_change.connect(lambda: self.setStyleSheet(get_theme()))
+        sd.exec()
 
     def slot_update_proj(self):
         def aux(response: RequestData):

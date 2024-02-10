@@ -1,21 +1,25 @@
-from PyQt6.QtCore import QSize, QRect, QUrl
+from PyQt6.QtCore import QSize, QRect, QUrl, pyqtSignal
 from PyQt6.QtWidgets import QDialog, QGridLayout, QGroupBox, QPushButton, QLineEdit, QFileDialog, QMessageBox, \
-    QLabel
+    QLabel, QRadioButton
 
 from src.core.requests.CheckPointList import ConnectTest
 from src.core.requests.RequestThread import RequestData
 from src.core.settings.ServerConfig import server_config
+from src.core.settings.SystemConfig import is_dark_theme, set_theme, DARK_THEME, LIGHT_THEME
 from src.strings.SettingDialog import Strings
 from src.core.settings.FileSystemConfig import FileSystemConfig
 
 
 class UI:
-    WindowSize = QSize(400, 240)
+    WindowSize = QSize(400, 300)
     GroupFsGeo = QRect(10, 10, 380, 100)
     GroupConnGeo = QRect(10, 120, 380, 100)
+    GroupSysGeo = QRect(10, 230, 380, 60)
 
 
 class SettingDialog(QDialog):
+    sig_theme_change = pyqtSignal()
+
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -69,6 +73,29 @@ class SettingDialog(QDialog):
         self.m_group_conn.setGeometry(UI.GroupConnGeo)
         self.m_group_conn.setLayout(self.m_grid_conn)
 
+        # ====== System ======
+        self.m_grid_sys = QGridLayout()
+        self.m_grid_sys.setColumnStretch(0, 3)
+        self.m_grid_sys.setColumnStretch(1, 2)
+        self.m_grid_sys.setColumnStretch(2, 2)
+        self.m_grid_sys.setColumnStretch(3, 9)
+
+        self.m_btn_theme = QPushButton(Strings.SystemConfig.ThemeBtn, self)
+        self.m_grid_sys.addWidget(self.m_btn_theme)
+
+        self.m_radio_dark = QRadioButton(Strings.SystemConfig.ThemeDark, self)
+        self.m_radio_dark.setChecked(is_dark_theme())
+        self.m_radio_dark.toggled.connect(self.slot_set_dark)
+        self.m_grid_sys.addWidget(self.m_radio_dark)
+
+        self.m_radio_light = QRadioButton(Strings.SystemConfig.ThemeLight, self)
+        self.m_radio_light.setChecked(not is_dark_theme())
+        self.m_grid_sys.addWidget(self.m_radio_light)
+
+        self.m_group_sys = QGroupBox(Strings.SystemConfig.Title, self)
+        self.m_group_sys.setGeometry(UI.GroupSysGeo)
+        self.m_group_sys.setLayout(self.m_grid_sys)
+
         # ====== Bind ======
         self.m_btn_storage.clicked.connect(self.slot_get_storage)
         self.m_btn_src.clicked.connect(self.slot_get_src)
@@ -79,7 +106,7 @@ class SettingDialog(QDialog):
 
         # ====== Launch ======
         self.update_status()
-        self.exec()
+        # self.exec()
 
     def slot_get_storage(self):
         self.config.set_storage_path(self.get_path())
@@ -117,6 +144,10 @@ class SettingDialog(QDialog):
             QMessageBox.critical(self, "Invalid Path!", "Non-exist or No Permission")
             path = ""
         return path
+
+    def slot_set_dark(self, b):
+        set_theme(DARK_THEME if b else LIGHT_THEME)
+        self.sig_theme_change.emit()
 
     def update_status(self):
         s = self.config.get_storage_path()
