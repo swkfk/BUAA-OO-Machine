@@ -1,7 +1,7 @@
 import os
 
 from PyQt6.QtCore import QRect, QSize, Qt
-from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QMessageBox
+from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QMessageBox, QTextEdit
 
 from src.core.requests.DownloadThread import DownloadThread
 from src.core.requests.UrlGenerator import URL
@@ -10,7 +10,7 @@ from src.strings.PointArea import Strings
 
 
 class UI:
-    Size = QSize(740, 80)
+    Size = QSize(570, 80)
     IdxGeo = QRect(0, 0, 60, 30)
     SameGeo = QRect(0, 30, 100, 30)
     DiffGeo = QRect(100, 30, 100, 30)
@@ -19,9 +19,11 @@ class UI:
     BtnOutGeo = QRect(289, 3, 75, 24)
     BtnOtherGeo = QRect(206, 33, 158, 24)
 
+    TextGeo = QRect(380, 0, 140, 60)
+
 
 class PointArea(QWidget):
-    def __init__(self, idx, same_lst, diff_lst, user: str, proj: int, unit: int, status_fn):
+    def __init__(self, idx, same_lst, diff_lst, desc, user: str, proj: int, unit: int, status_fn):
         super().__init__()
 
         self.download_thread = None
@@ -43,6 +45,9 @@ class PointArea(QWidget):
         self.m_label_diff = QLabel(Strings.Widget.Diff.format(len(diff_lst)), self)
         self.m_label_diff.setGeometry(UI.DiffGeo)
         self.m_label_diff.setToolTip(Strings.Widget.ToolTip(diff_lst))
+
+        self.m_text = QTextEdit(desc, self)
+        self.m_text.setGeometry(UI.TextGeo)
 
         self.m_btn_dict: {str, QPushButton} = {
             "input": QPushButton(Strings.Download.Input, self),

@@ -173,7 +173,7 @@ class MainWidget(QMainWindow):
         def aux(response: RequestData):
             self.status_ready()
             if response.status_code == 200:
-                self.point_lst = reversed(response.data)
+                self.point_lst = response.data
             else:
                 self.point_lst = []
                 QMessageBox.critical(self, "[Points] Unhandled Error!", response.data["."])
@@ -186,7 +186,7 @@ class MainWidget(QMainWindow):
 
             for idx, point in enumerate(self.point_lst):
                 pa = PointArea(
-                    idx, point["same"], point["diff"],
+                    idx, point["same"], point["diff"], point["desc"],
                     self.real_user(), self.proj_id(), self.unit_id(),
                     (self.status_ready, self.status_busy)
                 )
@@ -203,6 +203,9 @@ class MainWidget(QMainWindow):
 
     def slot_submit(self):
         SubmitDialog(self, self.real_user(), self.proj_id(), self.unit_id())
+
+    def slot_update(self):
+        pass
 
     def status_ready(self):
         self.statusBar().showMessage(Strings.Status.Ready, 0)
