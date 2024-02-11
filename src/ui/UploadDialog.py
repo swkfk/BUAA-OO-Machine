@@ -1,6 +1,7 @@
 from PyQt6.QtCore import QSize, QRect, QUrl
-from PyQt6.QtWidgets import QDialog, QLabel, QPushButton, QTextEdit, QFileDialog, QLineEdit
+from PyQt6.QtWidgets import QDialog, QLabel, QPushButton, QTextEdit, QFileDialog, QLineEdit, QMessageBox
 
+from src.core.fs.UploadThread import UploadThread
 from src.strings.UploadDialog import Strings
 
 
@@ -23,6 +24,8 @@ class UploadDialog(QDialog):
     def __init__(self, parent, proj_id, proj, unit_id, unit):
         super().__init__(parent)
 
+        self.upload_thread = None
+        self.proj, self.unit = proj_id, unit_id
         self.resize(UI.WinSize)
         self.setWindowTitle(Strings.Window.Title)
 
@@ -49,6 +52,7 @@ class UploadDialog(QDialog):
         self.m_btn_confirm.setGeometry(UI.BtnConfirmGeo)
 
         self.m_btn_file.clicked.connect(self.slot_choose_file)
+        self.m_btn_confirm.clicked.connect(self.slot_confirm)
 
         self.exec()
 
@@ -57,3 +61,16 @@ class UploadDialog(QDialog):
         file = u.toLocalFile()
         if not file == "":
             self.m_line_file.setText(file)
+
+    def slot_confirm(self):
+        def aux(s: str):
+            self.m_btn_confirm.setText(Strings.Confirm.Btn)
+            QMessageBox.information(self, Strings.Confirm.ResultTitle, s)
+            self.close()
+
+        self.m_btn_confirm.setText(Strings.Confirm.Uploading)
+        self.upload_thread: UploadThread = UploadThread(
+            self.proj, self.unit, self.m_line_file.text(), self.m_text_desc.toHtml()
+        )
+        self.upload_thread.sig_finish.connect(aux)
+        self.upload_thread.start()

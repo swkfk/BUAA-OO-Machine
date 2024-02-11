@@ -17,3 +17,4 @@ class Strings:
     class Confirm:
         Btn = "确认上传"
         Uploading = "上传中..."
+        ResultTitle = "上传结果"

@@ -39,5 +39,9 @@ class URL:
         return f"{URL.BaseUrl()}/submit?user={user}&proj={proj}&unit={unit}"
 
     @staticmethod
+    def Upload(proj: int, unit: int, desc_base64: str):
+        return f"{URL.BaseUrl()}/upload?proj={proj}&unit={unit}&desc={desc_base64}"
+
+    @staticmethod
     def DownloadInout(scope: str, user: str, proj: int, unit: int, point: int):
         return f"{URL.BaseUrl()}/{scope}?user={user}&proj={proj}&unit={unit}&point={point}"
