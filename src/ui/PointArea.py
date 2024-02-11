@@ -48,6 +48,7 @@ class PointArea(QWidget):
 
         self.m_text = QTextEdit(desc, self)
         self.m_text.setGeometry(UI.TextGeo)
+        self.m_text.setReadOnly(True)
 
         self.m_btn_dict: {str, QPushButton} = {
             "input": QPushButton(Strings.Download.Input, self),

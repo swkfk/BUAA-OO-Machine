@@ -15,6 +15,7 @@ from src.core.requests.CheckPointList import GetProjList, GetUnitList, GetPointI
 from src.strings.MainWidget import Strings
 from src.ui.SettingDialog import SettingDialog
 from src.ui.SubmitDialog import SubmitDialog
+from src.ui.UploadDialog import UploadDialog
 
 
 class UI:
@@ -110,6 +111,7 @@ class MainWidget(QMainWindow):
         self.m_combo_proj.currentIndexChanged.connect(self.slot_update_unit)
         self.m_combo_unit.currentIndexChanged.connect(self.slot_update_point)
         self.m_btn_submit.clicked.connect(self.slot_submit)
+        self.m_btn_upload.clicked.connect(self.slot_upload)
 
     def real_user(self):
         return self.user_name if not self.temp_mode else "__TEST__"
@@ -140,7 +142,7 @@ class MainWidget(QMainWindow):
         def aux(response: RequestData):
             self.status_ready()
             if response.status_code == 200:
-                self.proj_lst = reversed(response.data)
+                self.proj_lst = list(reversed(response.data))
             elif response.status_code == 0:
                 self.proj_lst = []
                 QMessageBox.critical(self, "[Projects] Connect Timeout!", response.data["."])
@@ -157,7 +159,7 @@ class MainWidget(QMainWindow):
         def aux(response: RequestData):
             self.status_ready()
             if response.status_code == 200:
-                self.unit_lst = reversed(response.data)
+                self.unit_lst = list(reversed(response.data))
             else:
                 self.unit_lst = []
                 QMessageBox.critical(self, "[Units] Unhandled Error!", response.data["."])
@@ -204,8 +206,10 @@ class MainWidget(QMainWindow):
     def slot_submit(self):
         SubmitDialog(self, self.real_user(), self.proj_id(), self.unit_id())
 
-    def slot_update(self):
-        pass
+    def slot_upload(self):
+        UploadDialog(self,
+                     self.proj_id(), self.m_combo_proj.currentText(),
+                     self.unit_id(), self.m_combo_unit.currentText())
 
     def status_ready(self):
         self.statusBar().showMessage(Strings.Status.Ready, 0)
