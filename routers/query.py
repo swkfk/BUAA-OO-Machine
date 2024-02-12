@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from core.fs import JsonLoader, DB_ROOT, COURSE_ROOT
+from core.fs import JsonLoader, DB_ROOT, COURSE_ROOT, USER_ROOT
 
 router = APIRouter()
 
@@ -59,4 +59,7 @@ async def GetHistoryList(user: str):
         "digest": str,  该次提交的代码摘要（md5 算法）
         "time": str,    该次提交的时间（格式为 "%Y-%m-%d %H:%M"）
     """
-    pass
+    user_file = USER_ROOT / f"{user}.json"
+    if not user_file.exists():
+        user_file.write_text("[]")
+    return await JsonLoader(user_file)
