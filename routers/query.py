@@ -1,5 +1,7 @@
 from fastapi import APIRouter
 
+from core.fs import JsonLoader, DB_ROOT, COURSE_ROOT
+
 router = APIRouter()
 
 
@@ -9,7 +11,8 @@ async def GetProjList():
     获取项目全部项目（Project）列表
     :return: 由字符串组成的列表，每个元素即为项目名，有序
     """
-    pass
+    obj = await JsonLoader(DB_ROOT / "course.json")
+    return list(map(lambda x: x["title"], obj))
 
 
 @router.get("/unit")
@@ -19,7 +22,9 @@ async def GetUnitList(proj: int):
     :param proj: 项目的 **编号**， 从 0 开始计数
     :return: 该项目的全部单元组成的列表，每个元素即为单元名，有序
     """
-    pass
+    obj = await JsonLoader(DB_ROOT / "course.json")
+    # TODO /// Error handler (Index out of the boundary)
+    return obj[proj]["units"]
 
 
 @router.get("/point")
@@ -34,7 +39,15 @@ async def GetPointList(user: str, proj: int, unit: int):
         "diff": [str],  结果不同的用户名称的列表
         "desc": str,    该测试点的描述
     """
-    pass
+    unit_path = COURSE_ROOT / f"{proj}" / f"{unit}.json"
+    unit_obj = await JsonLoader(unit_path)
+    lst = []
+    for point_idx, point in enumerate(unit_obj):
+        lst.append({
+            "same": [], "diff": [],  # TODO ///
+            "desc": point["desc"]
+        })
+    return lst
 
 
 @router.get("/history")
