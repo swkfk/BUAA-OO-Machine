@@ -34,10 +34,14 @@ class MainWidget(QMainWindow):
     def __init__(self):
         super(MainWidget, self).__init__()
 
+        self.setStyleSheet(get_theme())
+
         self.user = LocalAuthentic.User()
         if self.user.status() == self.user.UserStatus.NONE:
             RegisterDialog(self, self.user.create_user)
-            SettingDialog(self)
+            sd = SettingDialog(self)
+            sd.sig_theme_change.connect(lambda: self.setStyleSheet(get_theme()))
+            sd.exec()
 
         self.user_name = self.user.user_name()
         self.temp_mode = self.user.temp_mode()
@@ -45,8 +49,6 @@ class MainWidget(QMainWindow):
         self.setWindowTitle(Strings.Window.Title + self.user_name +
                             (Strings.Window.TempTitle if self.temp_mode else ""))
         self.setFixedSize(UI.WindowSize)
-
-        self.setStyleSheet(get_theme())
 
         # Component declaration
         self.m_widget_btn = QWidget(self)
