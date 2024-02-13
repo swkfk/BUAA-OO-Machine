@@ -1,6 +1,8 @@
 import json
 import os.path
+import tempfile
 from pathlib import Path
+from zipfile import ZipFile
 
 DB_ROOT = Path("database")
 COURSE_ROOT = DB_ROOT / "course"
@@ -38,3 +40,20 @@ class _JsonFileCacher:
 
 
 JsonLoader = _JsonFileCacher()
+
+
+async def GetPointTimestamp(proj: int, unit: int, point: int):
+    unit_file = COURSE_ROOT / f"{proj}" / f"{unit}.json"
+    unit_obj = await JsonLoader(unit_file)
+    return unit_obj[point]["timestamp"]
+
+
+async def ZipOutputs(path: str):
+    tf = tempfile.NamedTemporaryFile(suffix=".zip")
+    zf = ZipFile(tf, "w")
+
+    for file in Path(path).glob("*"):
+        zf.write(file, arcname=file.relative_to(path))
+    zf.close()
+    tf.seek(os.SEEK_SET)
+    return tf
