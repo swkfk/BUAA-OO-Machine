@@ -5,30 +5,30 @@ class Strings:
         TempTitle = " [TEMP MODE]"
 
     class UserMode:
-        BtnUser = "切换到临时用户"
-        BtnTemp = "切换到普通用户"
+        BtnUser = "Switch to Temp"
+        BtnTemp = "Switch to Normal"
 
     class Server:
-        HintUrl = "服务器地址"
-        HintPort = "端口号"
+        HintUrl = "Server"
+        HintPort = "Port"
 
     class Sync:
-        Btn = "同步数据"
+        Btn = "Sync"
 
     class UploadData:
-        Btn = "上传输入数据"
+        Btn = "Create Test"
 
     class History:
-        Btn = "提交记录"
+        Btn = "History"
 
     class Submit:
-        Btn = "上传代码"
+        Btn = "Submit..."
 
     class Setting:
-        Btn = "设置"
+        Btn = "Settings"
 
     class Status:
-        Ready = "就绪!"
-        BusyUpdateProject = "读取 Project 列表 ..."
-        BusyUpdateUnit = "读取 Unit 列表 ..."
-        BusyUpdatePoint = "读取 Point 列表 ..."
+        Ready = "Ready!"
+        BusyUpdateProject = "Update the Project list ..."
+        BusyUpdateUnit = "Update the Unit list ..."
+        BusyUpdatePoint = "Update the Point list ..."

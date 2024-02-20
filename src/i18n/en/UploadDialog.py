@@ -1,20 +1,20 @@
 class Strings:
     class Window:
-        Title = "上传测试数据（Stdin）"
+        Title = "Create a test (Stdin)"
 
     class Hint:
-        Proj = "当前项目：{}"
-        Unit = "当前单元：{}"
+        Proj = "Current Project: {}"
+        Unit = "Current Unit: {}"
 
     class File:
-        Btn = "选择文件..."
+        Btn = "Choose file"
         Unknown = "<Empty>"
-        Desc = "选择数据文件"
+        Desc = "The input data of the test"
 
     class Desc:
-        Label = "请输入描述（可选）"
+        Label = "Description (optional)"
 
     class Confirm:
-        Btn = "确认上传"
-        Uploading = "上传中..."
-        ResultTitle = "上传结果"
+        Btn = "Confirm"
+        Uploading = "Uploading..."
+        ResultTitle = "Uploaded!"

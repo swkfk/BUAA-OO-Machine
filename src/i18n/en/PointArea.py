@@ -1,17 +1,17 @@
 class Strings:
     class Widget:
         Index = "#{}"
-        Same = "与你一致 {} 人"
-        Diff = "存在差异 {} 人"
+        Same = "Same with {} person(s)"
+        Diff = "Differ from {} person(s)"
 
         @staticmethod
         def ToolTip(lst):
             return "".join((f"<li>{p}</li>" for p in lst))
 
     class Download:
-        Input = "保存 Stdin"
-        Output = "保存 Stdout"
-        Others = "保存其他人的 Stdout"
+        Input = "Save Stdin"
+        Output = "Save Stdout"
+        Others = "Save others' Stdout"
 
         Dict = {
             "input": Input,
@@ -20,9 +20,9 @@ class Strings:
         }
 
     class Bar:
-        Download = "正在下载 ..."
-        Ready = "就绪！"
+        Download = "Downloading ..."
+        Ready = "Ready!"
 
     class MsgBox:
-        Title = "下载完成"
-        Content = "文件保存：{}"
+        Title = "Successfully Downloaded"
+        Content = "File Saved At: {}"

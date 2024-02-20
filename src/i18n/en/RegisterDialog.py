@@ -1,8 +1,8 @@
 class Strings:
 
     class Window:
-        Title = "呐呐呐，是新面孔喵！"
+        Title = "Meow! A new friend ~"
 
     class Input:
-        Prompt = "告诉我你叫什么吧~"
+        Prompt = "Tell me, you name!"
         Button = "Go!"

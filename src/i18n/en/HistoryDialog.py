@@ -1,6 +1,6 @@
 class Strings:
     class Window:
-        Title = "提交记录 - {}"
+        Title = "Submission History - {}"
 
     class Pick:
         Next = ">"
@@ -8,11 +8,11 @@ class Strings:
         Number = "{} / {}"
 
     class Info:
-        Digest = "代码摘要 - {}"
-        Time = "提交时间 - {}"
+        Digest = "Submission Digest - {}"
+        Time = "Submission Time - {}"
 
     class Download:
-        Text = "下载源代码"
+        Text = "Download"
 
     class Status:
-        BusyUpdateHistory = "更新提交记录 ..."
+        BusyUpdateHistory = "Update the history ..."

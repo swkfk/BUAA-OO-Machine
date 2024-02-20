@@ -1,3 +1,5 @@
+from functools import partial
+
 from PyQt6.QtCore import QSize, QRect
 from PyQt6.QtWidgets import QDialog, QPushButton
 
@@ -29,7 +31,7 @@ class I18nDialog(QDialog):
         for i, (code, text) in enumerate(lang_list):
             btn = QPushButton(text, self)
             btn.setGeometry(self.ui.I_thGeo(i))
-            btn.clicked.connect(lambda: set_lang(code) is not None or self.deleteLater())
+            btn.clicked.connect(partial(lambda x: set_lang(x) is not None or self.deleteLater(), code))
             self.btn_lst.append(btn)
 
         self.exec()
