@@ -6,7 +6,7 @@ from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QMessageBox, QTextEdit
 from src.core.requests.DownloadThread import DownloadThread
 from src.core.requests.UrlGenerator import URL
 from src.core.settings.FileSystemConfig import FileSystemConfig
-from src.strings.PointArea import Strings
+from src.i18n import PointArea as Strings
 
 
 class UI:

@@ -2,7 +2,7 @@ from PyQt6.QtCore import QSize, QRect, Qt
 from PyQt6.QtWidgets import QDialog, QLabel, QHBoxLayout, QRadioButton, QWidget
 
 from src.core.fs.SubmitThread import SubmitThread
-from src.strings.SubmitDialog import Strings
+from src.i18n import SubmitDialog as Strings
 
 
 class UI:

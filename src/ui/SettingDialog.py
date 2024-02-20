@@ -6,7 +6,7 @@ from src.core.requests.CheckPointList import ConnectTest
 from src.core.requests.RequestThread import RequestData
 from src.core.settings.ServerConfig import server_config
 from src.core.settings.SystemConfig import is_dark_theme, set_theme, DARK_THEME, LIGHT_THEME
-from src.strings.SettingDialog import Strings
+from src.i18n import SettingDialog as Strings
 from src.core.settings.FileSystemConfig import FileSystemConfig
 
 

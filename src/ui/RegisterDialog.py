@@ -1,7 +1,7 @@
 from PyQt6.QtCore import QSize, QRect, Qt
 from PyQt6.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton
 
-from src.strings.RegisterDialog import Strings
+from src.i18n import RegisterDialog as Strings
 
 
 class UI:

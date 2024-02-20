@@ -2,7 +2,7 @@ from PyQt6.QtCore import QSize, QRect, QUrl
 from PyQt6.QtWidgets import QDialog, QLabel, QPushButton, QTextEdit, QFileDialog, QLineEdit, QMessageBox
 
 from src.core.fs.UploadThread import UploadThread
-from src.strings.UploadDialog import Strings
+from src.i18n import UploadDialog as Strings
 
 
 class UI:

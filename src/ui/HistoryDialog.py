@@ -4,7 +4,7 @@ from PyQt6.QtCore import QSize, QRect, Qt
 from PyQt6.QtWidgets import QDialog, QPushButton, QLabel, QProgressBar, QMessageBox
 
 from src.core.requests.UrlGenerator import URL
-from src.strings.HistoryDialog import Strings
+from src.i18n import HistoryDialog as Strings
 from src.core.requests.HistoryView import GetHistoryList
 from src.core.requests.DownloadThread import DownloadThread
 from src.core.requests.RequestThread import RequestData

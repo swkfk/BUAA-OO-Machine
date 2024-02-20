@@ -1,18 +1,18 @@
 import sys
 
-import qdarkstyle
 from PyQt6.QtCore import QSize, QRect, QCoreApplication, QProcess
 from PyQt6.QtWidgets import QWidget, QPushButton, QComboBox, QVBoxLayout, QScrollArea, QMainWindow, QMessageBox, \
     QGridLayout
 
 from src.core.requests.RequestThread import RequestData
 from src.core.settings.SystemConfig import get_theme
+from src.ui.I18nDialog import I18nDialog
 from src.ui.PointArea import PointArea
 from src.ui.RegisterDialog import RegisterDialog
 from src.ui.HistoryDialog import HistoryDialog
 from src.core.settings import LocalAuthentic
 from src.core.requests.CheckPointList import GetProjList, GetUnitList, GetPointInfo
-from src.strings.MainWidget import Strings
+from src.i18n import MainWidget as Strings
 from src.ui.SettingDialog import SettingDialog
 from src.ui.SubmitDialog import SubmitDialog
 from src.ui.UploadDialog import UploadDialog
@@ -37,8 +37,14 @@ class MainWidget(QMainWindow):
         self.setStyleSheet(get_theme())
 
         self.user = LocalAuthentic.User()
+
+        # If it is a new user
         if self.user.status() == self.user.UserStatus.NONE:
+            # I18n Config
+            I18nDialog(self)
+            # Enter the Username
             RegisterDialog(self, self.user.create_user)
+            # The Setting Dialog
             sd = SettingDialog(self)
             sd.sig_theme_change.connect(lambda: self.setStyleSheet(get_theme()))
             sd.exec()
