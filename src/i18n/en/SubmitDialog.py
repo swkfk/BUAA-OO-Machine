@@ -12,3 +12,9 @@ class Strings:
         Done = "Done！"
 
         Hint = [Submitting, Unzipping,  Compiling, Running, Done]
+
+    class Ask:
+        Title = "Enter the Java Main Class, with the full package path"
+        Confirm = "Confirm"
+        Cancel = "Cancel"
+        NoAskMore = "Confirm (Without Asking More)"
