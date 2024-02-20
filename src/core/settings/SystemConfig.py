@@ -10,7 +10,7 @@ DARK_THEME = "dark"
 
 def get_theme():
     if "theme" not in _sys_config:
-        _sys_config["theme"] = DARK_THEME
+        _sys_config["theme"] = LIGHT_THEME
     if _sys_config["theme"] == LIGHT_THEME:
         return qdarkstyle.load_stylesheet(qt_api='pyqt6', palette=qdarkstyle.LightPalette)
     if _sys_config["theme"] == DARK_THEME:
