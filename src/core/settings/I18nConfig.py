@@ -15,4 +15,6 @@ def get_lang():
 
 
 def set_lang(lang):
+    global _lang_code
     _lang_config["code"] = lang
+    _lang_code = lang
