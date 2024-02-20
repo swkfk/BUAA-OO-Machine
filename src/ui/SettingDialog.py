@@ -1,20 +1,24 @@
+from functools import partial
+
 from PyQt6.QtCore import QSize, QRect, QUrl, pyqtSignal
 from PyQt6.QtWidgets import QDialog, QGridLayout, QGroupBox, QPushButton, QLineEdit, QFileDialog, QMessageBox, \
-    QLabel, QRadioButton
+    QLabel, QRadioButton, QWidget
 
+from src.core.Reboot import reboot
 from src.core.requests.CheckPointList import ConnectTest
 from src.core.requests.RequestThread import RequestData
+from src.core.settings.I18nConfig import set_lang, get_lang
 from src.core.settings.ServerConfig import server_config
 from src.core.settings.SystemConfig import is_dark_theme, set_theme, DARK_THEME, LIGHT_THEME
-from src.i18n import SettingDialog as Strings
+from src.i18n import SettingDialog as Strings, lang_list
 from src.core.settings.FileSystemConfig import FileSystemConfig
 
 
 class UI:
-    WindowSize = QSize(400, 300)
+    WindowSize = QSize(400, 340)
     GroupFsGeo = QRect(10, 10, 380, 100)
     GroupConnGeo = QRect(10, 120, 380, 100)
-    GroupSysGeo = QRect(10, 230, 380, 60)
+    GroupSysGeo = QRect(10, 230, 380, 100)
 
 
 class SettingDialog(QDialog):
@@ -78,7 +82,7 @@ class SettingDialog(QDialog):
         self.m_grid_sys.setColumnStretch(0, 3)
         self.m_grid_sys.setColumnStretch(1, 2)
         self.m_grid_sys.setColumnStretch(2, 2)
-        self.m_grid_sys.setColumnStretch(3, 9)
+        self.m_grid_sys.setColumnStretch(3, 6)
 
         self.m_btn_theme = QPushButton(Strings.SystemConfig.ThemeBtn, self)
         self.m_grid_sys.addWidget(self.m_btn_theme)
@@ -91,6 +95,19 @@ class SettingDialog(QDialog):
         self.m_radio_light = QRadioButton(Strings.SystemConfig.ThemeLight, self)
         self.m_radio_light.setChecked(not is_dark_theme())
         self.m_grid_sys.addWidget(self.m_radio_light)
+
+        self.m_grid_sys.addWidget(QWidget())
+
+        self.m_btn_lang = QPushButton(Strings.SystemConfig.LangBtn, self)
+        self.m_grid_sys.addWidget(self.m_btn_lang)
+
+        self.m_btn_langs = []
+        for i, (code, text) in enumerate(lang_list):
+            btn = QPushButton(text, self)
+            btn.setEnabled(code != get_lang())
+            btn.clicked.connect(partial(self.slot_change_lang, code))
+            self.m_btn_langs.append(btn)
+            self.m_grid_sys.addWidget(btn)
 
         self.m_group_sys = QGroupBox(Strings.SystemConfig.Title, self)
         self.m_group_sys.setGeometry(UI.GroupSysGeo)
@@ -107,6 +124,13 @@ class SettingDialog(QDialog):
         # ====== Launch ======
         self.update_status()
         # self.exec()
+
+    @staticmethod
+    def slot_change_lang(lang):
+        if lang == get_lang():
+            return
+        set_lang(lang)
+        reboot()
 
     def slot_get_storage(self):
         self.config.set_storage_path(self.get_path())

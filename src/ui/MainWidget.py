@@ -4,6 +4,7 @@ from PyQt6.QtCore import QSize, QRect, QCoreApplication, QProcess
 from PyQt6.QtWidgets import QWidget, QPushButton, QComboBox, QVBoxLayout, QScrollArea, QMainWindow, QMessageBox, \
     QGridLayout
 
+from src.core.Reboot import reboot
 from src.core.requests.RequestThread import RequestData
 from src.core.settings.SystemConfig import get_theme
 from src.ui.I18nDialog import I18nDialog
@@ -133,10 +134,7 @@ class MainWidget(QMainWindow):
     def slot_user_mode_change(self):
         self.user.trigger_temp()
 
-        # Restart the application
-        QCoreApplication.quit()
-        status = QProcess.startDetached(sys.executable, sys.argv)
-        sys.exit(0 if status[0] else 2)
+        reboot()
 
     def slot_view_history(self):
         HistoryDialog(self, self.user_name)

@@ -24,3 +24,4 @@ class Strings:
         ThemeBtn = "Color Theme"
         ThemeDark = "Dark"
         ThemeLight = "Light"
+        LangBtn = "Language"

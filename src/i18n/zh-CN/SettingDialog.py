@@ -24,3 +24,4 @@ class Strings:
         ThemeBtn = "颜色主题"
         ThemeDark = "深色"
         ThemeLight = "浅色"
+        LangBtn = "语言"
