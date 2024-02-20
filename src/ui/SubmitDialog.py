@@ -1,7 +1,8 @@
 from PyQt6.QtCore import QSize, QRect, Qt
-from PyQt6.QtWidgets import QDialog, QLabel, QHBoxLayout, QRadioButton, QWidget
+from PyQt6.QtWidgets import QDialog, QLabel, QHBoxLayout, QRadioButton, QWidget, QLineEdit, QPushButton
 
 from src.core.fs.SubmitThread import SubmitThread
+from src.core.settings.JavaConfig import get_main_class, set_main_class, set_not_ask_each, get_ask_each
 from src.i18n import SubmitDialog as Strings
 
 
@@ -10,12 +11,50 @@ class UI:
     HintGeo = QRect(20, 20, 360, 30)
     BubbleGeo = QRect(100, 80, 200, 40)
 
+    AskSize = QSize(300, 110)
+    AskInputGeo = QRect(20, 20, 260, 30)
+    AskConfirmGeo = QRect(20, 70, 40, 25)
+    AskNoAskGeo = QRect(65, 70, 120, 25)
+    AskCancelGeo = QRect(240, 70, 40, 25)
+
+
+class AskMainClassDialog(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self.resize(UI.AskSize)
+        self.setWindowTitle(Strings.Ask.Title)
+
+        self.m_input = QLineEdit(get_main_class(), self)
+        self.m_input.setGeometry(UI.AskInputGeo)
+        self.m_input.textChanged.connect(set_main_class)
+
+        self.m_btn_confirm = QPushButton(Strings.Ask.Confirm, self)
+        self.m_btn_confirm.setGeometry(UI.AskConfirmGeo)
+        self.m_btn_confirm.clicked.connect(lambda: self.done(QDialog.DialogCode.Accepted))
+
+        self.m_btn_cancel = QPushButton(Strings.Ask.Cancel, self)
+        self.m_btn_cancel.setGeometry(UI.AskCancelGeo)
+        self.m_btn_cancel.clicked.connect(lambda: self.done(QDialog.DialogCode.Rejected))
+
+        self.m_btn_no_ask = QPushButton(Strings.Ask.NoAskMore, self)
+        self.m_btn_no_ask.setGeometry(UI.AskNoAskGeo)
+        self.m_btn_no_ask.clicked.connect(
+            lambda: self.done(QDialog.DialogCode.Accepted) is not None or set_not_ask_each()
+        )
+
 
 class SubmitDialog(QDialog):
     def __init__(self, parent, user, proj, unit):
         super().__init__(parent)
 
-        self.th_submit = SubmitThread(user, proj, unit)
+        if get_ask_each():
+            dialog = AskMainClassDialog(parent)
+            if QDialog.DialogCode.Rejected == dialog.exec():
+                self.done(QDialog.DialogCode.Rejected)
+                return
+
+        self.th_submit = SubmitThread(user, proj, unit, get_main_class())
         self.th_submit.sig_get_digest.connect(self.slot_set_digest)
         self.th_submit.sig_status_update.connect(self.slot_update_status)
 

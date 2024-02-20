@@ -11,10 +11,10 @@ class SubmitThread(QThread):
     sig_status_update = pyqtSignal(str)
     sig_get_digest = pyqtSignal(str)
 
-    def __init__(self, user: str, proj: int, unit: int):
+    def __init__(self, user: str, proj: int, unit: int, main_class: str):
         super().__init__()
         self.fs_config = FileSystemConfig()
-        self.user, self.proj, self.unit = user, proj, unit
+        self.user, self.proj, self.unit, self.main_class = user, proj, unit, main_class
 
     def run(self):
         # Tar the source files
@@ -24,7 +24,7 @@ class SubmitThread(QThread):
 
         # Submit the zip file
         sleep(0.5)
-        digest = submit(self.user, self.proj, self.unit, obj)
+        digest = submit(self.user, self.proj, self.unit, self.main_class, obj)
 
         if type(digest) != str or digest.startswith("-"):
             print("Bad Digest: ", digest)  # TODO: Error handler

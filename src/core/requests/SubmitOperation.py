@@ -1,3 +1,5 @@
+import base64
+
 import requests
 
 from src.core.fs.TempFile import TempFile
@@ -14,9 +16,11 @@ def get_status(digest: str):
         return repr(e)
 
 
-def submit(user: str, proj: int, unit: int, tf: TempFile):
+def submit(user: str, proj: int, unit: int, main_class: str, tf: TempFile):
     try:
-        return raw_file_post(URL.Submit(user, proj, unit), files={"file": (tf.name(), tf.obj().read())}).json()
+        class_base64 = base64.urlsafe_b64encode(main_class.encode('utf-8')).decode('utf-8')
+        return raw_file_post(URL.Submit(user, proj, unit, class_base64),
+                             files={"file": (tf.name(), tf.obj().read())}).json()
     except requests.Timeout:
         return "-: Timeout"
     except Exception as e:

@@ -12,3 +12,9 @@ class Strings:
         Done = "完成！"
 
         Hint = [Submitting, Unzipping,  Compiling, Running, Done]
+
+    class Ask:
+        Title = "请输入 Java 主类，需要包含完整包名"
+        Confirm = "确认"
+        Cancel = "取消"
+        NoAskMore = "确认（不再询问）"

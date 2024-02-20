@@ -10,6 +10,12 @@ class Strings:
         Storage = "下载路径..."
         Src = "源代码路径..."
 
+    class JavaSetting:
+        Title = "Java 配置"
+        MainClass = "Java 主类"
+        MainClassHint = "（包含完整包名）"
+        AskEach = "每次询问"
+
     class ConnectionSetting:
         Title = "连接配置"
         InfoBtn = "服务器信息"

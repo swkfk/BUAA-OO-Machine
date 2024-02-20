@@ -10,6 +10,12 @@ class Strings:
         Storage = "Save Path..."
         Src = "Code Path..."
 
+    class JavaSetting:
+        Title = "Java Config"
+        MainClass = "Main Class"
+        MainClassHint = "(Include the full package path)"
+        AskEach = "Query each time"
+
     class ConnectionSetting:
         Title = "Connection Config"
         InfoBtn = "Server"
