@@ -21,14 +21,7 @@ from src.ui.UploadDialog import UploadDialog
 
 class UI:
     WindowSize = QSize(590, 500)
-
-    BtnWidgetGeo = QRect(10, 0, 570, 90)
-
-    ScrollAreaGeo = QRect(20, 90, 550, 380)
-
-    @staticmethod
-    def ScrollWidgetSize(c):
-        return QSize(530, 80 * c)
+    MainGeo = QRect(10, 10, 570, 480)
 
 
 class MainWidget(QMainWindow):
@@ -55,11 +48,15 @@ class MainWidget(QMainWindow):
 
         self.setWindowTitle(Strings.Window.Title + self.user_name +
                             (Strings.Window.TempTitle if self.temp_mode else ""))
-        self.setFixedSize(UI.WindowSize)
+        self.resize(UI.WindowSize)
+
+        self.m_layout_main = QVBoxLayout(self)
+        self.m_widget_center = QWidget(self)
+        self.setCentralWidget(self.m_widget_center)
+        self.m_widget_center.setLayout(self.m_layout_main)
 
         # Component declaration
         self.m_widget_btn = QWidget(self)
-        self.m_widget_btn.setGeometry(UI.BtnWidgetGeo)
 
         self.m_grid_btn = QGridLayout()
         for c, s in [(0, 1), (1, 2), (2, 1), (3, 1)]:
@@ -92,12 +89,13 @@ class MainWidget(QMainWindow):
         self.m_grid_btn.addWidget(self.m_btn_submit)
 
         self.m_widget_btn.setLayout(self.m_grid_btn)
+        self.m_layout_main.addWidget(self.m_widget_btn)
 
         self.m_widget_list_point = []
         self.m_widget_point = QWidget()
         self.m_layout_point = QVBoxLayout()
         self.m_scroll_point = QScrollArea(self)
-        self.m_scroll_point.setGeometry(UI.ScrollAreaGeo)
+        self.m_layout_main.addWidget(self.m_scroll_point)
 
         self.status_ready()
 
@@ -200,8 +198,8 @@ class MainWidget(QMainWindow):
                 )
                 self.m_widget_list_point.append(pa)
                 self.m_layout_point.addWidget(pa)
-            self.m_widget_point.resize(UI.ScrollWidgetSize(len(self.m_widget_list_point)))
             self.m_widget_point.setLayout(self.m_layout_point)
+            self.m_scroll_point.setWidgetResizable(True)
             self.m_scroll_point.setWidget(self.m_widget_point)
 
         if self.m_combo_unit.count() == 0:
