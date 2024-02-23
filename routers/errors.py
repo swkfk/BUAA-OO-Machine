@@ -1,11 +1,19 @@
 from fastapi import APIRouter
 
-from core.fs import JAVA_ROOT
+from core.fs import JAVA_ROOT, GetPointTimestamp, POINT_ROOT
 
 router = APIRouter()
 
 
 @router.get("/errors/compile")
-def GetCEMsg(digest: str):
+async def GetCEMsg(digest: str):
     text = (JAVA_ROOT / f"{digest}" / "compile-msg.txt").read_text()
     return text.replace(f"database/java/{digest}/", "")
+
+
+@router.get("/errors/runtime")
+async def GetREMsg(user: str, proj: int, unit: int, point: int):
+    timestamp = await GetPointTimestamp(proj, unit, point)
+    ret = (POINT_ROOT / f"{timestamp}" / "return_value" / user).read_text()
+    text = (POINT_ROOT / f"{timestamp}" / "stderr" / user).read_text()
+    return f"<pre><b>Return Value: {ret} </b><br /> {text}</pre>"

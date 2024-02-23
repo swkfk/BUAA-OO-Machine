@@ -42,7 +42,7 @@ class JudgeCore:
         # Maybe this will be slow!
         threading.Thread(target=aux).start()
 
-    def _add_status(self, status: Literal["Submitted", "Unzipped", "Compiled", "Done", "Err::CE"]):
+    def _add_status(self, status: Literal["Submitted", "Unzipped", "Compiled", "Done", "Err::CE", "Err::RE"]):
         (self.status_path / status).touch(exist_ok=False)
 
     def _init_env(self):
@@ -86,16 +86,24 @@ class JudgeCore:
         lst: [int] = await GetPointListOfTimestamp(self.proj, self.unit)
 
         # 2. Run all of them
+        rets = []
         for timestamp in lst:
             base_path = POINT_ROOT / str(timestamp)
             in_path = base_path / "stdin"
             out_path = base_path / "stdout" / self.user
-            Cmd("java") \
+            err_path = base_path / "stderr" / self.user
+            ret_path = base_path / "return_value" / self.user
+            ret = Cmd("java") \
                 .arg(self.main_class) \
                 .args(["-cp", "."]) \
                 .cwd(str(self.build_path)) \
                 .stdin(open(in_path, "r")) \
                 .stdout(open(out_path, "w")) \
+                .stderr(open(err_path, "w")) \
                 .wait()
-
-        self._add_status("Done")
+            rets.append(ret)
+            ret_path.write_text(str(ret))
+        if any(rets):
+            self._add_status("Err::RE")
+        else:
+            self._add_status("Done")
