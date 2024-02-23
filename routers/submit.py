@@ -35,11 +35,13 @@ async def SubmitCode(user: str, proj: int, unit: int, class_b64: str, file: Uplo
         json.dump(point_user_obj, f)
 
     source_file = SOURCE_ROOT / f"{digest}.zip"
+    class_file = SOURCE_ROOT / f"{digest}.entry"
     with open(source_file, "wb") as f:
         f.write(file)
+    class_file.write_text(main_class)
 
     # Run the judge process before record the submission into the user's database
-    JudgeCore(digest, main_class, (user, proj, unit)).run()
+    JudgeCore(digest, (user, proj, unit)).run()
 
     user_file = USER_ROOT / f"{user}.json"
     if not user_file.exists():

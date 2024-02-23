@@ -9,14 +9,15 @@ from core.fs import SOURCE_ROOT, JAVA_ROOT, GetPointListOfTimestamp, POINT_ROOT
 
 
 class JudgeCore:
-    def __init__(self, digest: str, main_class: str, sys_info: (str, int, int)):
-        self.main_class = main_class
+    def __init__(self, digest: str, sys_info: (str, int, int)):
         self.user, self.proj, self.unit = sys_info
         self.zipped_file = SOURCE_ROOT / f"{digest}.zip"
         self.target_path = JAVA_ROOT / f"{digest}"
         self.status_path = self.target_path / "status"
         self.build_path = self.target_path / "class"
         self.source_path = self.target_path / "src"
+
+        self.main_class = (SOURCE_ROOT / f"{digest}.entry").read_text()
 
     def run(self):
         self._init_env()
