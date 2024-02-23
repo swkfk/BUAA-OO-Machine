@@ -37,6 +37,7 @@ async def UploadTestPoint(proj: int, unit: int, desc: str, file: UploadFile = Fi
     json.dump(unit_obj, f_json)
 
     (POINT_ROOT / f"{timestamp}").mkdir(exist_ok=True)
+    (POINT_ROOT / f"{timestamp}" / "stdout").mkdir(exist_ok=True)
     f_stdin = open(point_file, "wb")
     f_stdin.write(file)
 
