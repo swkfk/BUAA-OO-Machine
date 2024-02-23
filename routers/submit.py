@@ -1,26 +1,30 @@
+import base64
 import time
 import hashlib
 import json
 
 from fastapi import APIRouter, UploadFile, File
 
-from core.fs import COURSE_ROOT, JsonLoader, SOURCE_ROOT, USER_ROOT
+from core.fs import COURSE_ROOT, JsonLoader, SOURCE_ROOT, USER_ROOT, JAVA_ROOT
+from core.judge_core import JudgeCore
 
 router = APIRouter()
 
 
 @router.post("/submit")
-async def SubmitCode(user: str, proj: int, unit: int, file: UploadFile = File(...)):
+async def SubmitCode(user: str, proj: int, unit: int, class_b64: str, file: UploadFile = File(...)):
     """
     提交代码，提交文件为压缩包，不包含 "src" 文件夹
     :param user: 用户名，临时用户的用户名为 "__TEMP__"
     :param proj: 项目的 **编号**， 从 0 开始计数
     :param unit: 单元的 **编号**， 从 0 开始计数
+    :param class_b64: 主类的 url-safe base64 编码
     :param file: 接收的文件对象
     :return: 该次提交的代码摘要（使用 md5 算法）
     """
     file = await file.read()
     digest = hashlib.md5(file).hexdigest()
+    main_class = base64.urlsafe_b64decode(class_b64).decode('utf-8')
 
     point_user_file = COURSE_ROOT / f"{proj}" / f"{unit}.submit.json"
     if not point_user_file.exists():
@@ -33,6 +37,9 @@ async def SubmitCode(user: str, proj: int, unit: int, file: UploadFile = File(..
     source_file = SOURCE_ROOT / f"{digest}.zip"
     with open(source_file, "wb") as f:
         f.write(file)
+
+    # Run the judge process before record the submission into the user's database
+    JudgeCore(digest, main_class, (user, proj, unit)).run()
 
     user_file = USER_ROOT / f"{user}.json"
     if not user_file.exists():
@@ -59,4 +66,8 @@ async def CheckSubmitStatus(digest: str):
         "Compiled"  代码编译成功
         "Done"      全部测评与比对工作已经完成
     """
-    return "Done"
+    status_path = JAVA_ROOT / f"{digest}" / "status"
+    for status in ["Done", "Compiled", "Unzipped", "Submitted"]:
+        if (status_path / status).exists():
+            return status
+    assert False, "Status missed for all"  # TODO: /// Use `raise` instead of `assert False`

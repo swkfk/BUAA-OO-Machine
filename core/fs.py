@@ -9,6 +9,7 @@ COURSE_ROOT = DB_ROOT / "course"
 POINT_ROOT = DB_ROOT / "point"
 USER_ROOT = DB_ROOT / "user"
 SOURCE_ROOT = DB_ROOT / "source"
+JAVA_ROOT = DB_ROOT / "java"
 
 
 def ensure_directory():
@@ -17,6 +18,7 @@ def ensure_directory():
     POINT_ROOT.mkdir(exist_ok=True)
     USER_ROOT.mkdir(exist_ok=True)
     SOURCE_ROOT.mkdir(exist_ok=True)
+    JAVA_ROOT.mkdir(exist_ok=True)
 
 
 class _JsonFileCacher:
@@ -46,6 +48,12 @@ async def GetPointTimestamp(proj: int, unit: int, point: int):
     unit_file = COURSE_ROOT / f"{proj}" / f"{unit}.json"
     unit_obj = await JsonLoader(unit_file)
     return unit_obj[point]["timestamp"]
+
+
+async def GetPointListOfTimestamp(proj: int, unit: int):
+    unit_file = COURSE_ROOT / f"{proj}" / f"{unit}.json"
+    unit_obj = await JsonLoader(unit_file)
+    return [obj["timestamp"] for obj in unit_obj]
 
 
 async def ZipOutputs(path: str):
