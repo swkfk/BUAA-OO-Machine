@@ -21,8 +21,10 @@ class Strings:
 
     class Bar:
         Download = "Downloading ..."
+        ReadMsg = "Getting the message ..."
         Ready = "Ready!"
 
     class MsgBox:
         Title = "Successfully Downloaded"
         Content = "File Saved At: {}"
+        RE_Title = "Runtime Information"

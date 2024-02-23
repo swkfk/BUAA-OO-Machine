@@ -1,9 +1,12 @@
 import os
 
 from PyQt6.QtCore import QRect, QSize, Qt
-from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QMessageBox, QTextEdit, QGridLayout
+from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QMessageBox, QTextEdit, QGridLayout, QErrorMessage
 
+from src.core.ClickableLabel import ClickableLabel
+from src.core.requests.CheckPointList import GetPointREMsg
 from src.core.requests.DownloadThread import DownloadThread
+from src.core.requests.RequestThread import RequestData
 from src.core.requests.UrlGenerator import URL
 from src.core.settings.FileSystemConfig import FileSystemConfig
 from src.i18n import PointArea as Strings
@@ -40,7 +43,8 @@ class PointArea(QWidget):
         self.m_layout_main.setColumnStretch(4, 10)
         self.setLayout(self.m_layout_main)
 
-        self.m_label_idx = QLabel(Strings.Widget.Index.format(idx), self)
+        self.m_label_idx = ClickableLabel(Strings.Widget.Index.format(idx), self)
+        self.m_label_idx.clicked.connect(self.slot_request_re_msg)
         self.m_layout_main.addWidget(self.m_label_idx, 0, 0, 2, 1, Qt.AlignmentFlag.AlignCenter)
 
         self.m_label_same = QLabel(Strings.Widget.Same.format(len(same_lst)), self)
@@ -64,6 +68,19 @@ class PointArea(QWidget):
         for scope in ["input", "output", "all"]:
             self.m_layout_main.addWidget(self.m_btn_dict[scope], *UI.BtnPos[scope])
             self.m_btn_dict[scope].clicked.connect(self.slot_common_download(scope))
+
+    def slot_request_re_msg(self):
+        def aux(response: RequestData):
+            self.status_ready()
+            if response.status_code == 200:
+                error_dlg = QErrorMessage(self)
+                error_dlg.setWindowTitle(Strings.MsgBox.RE_Title)
+                error_dlg.showMessage(response.data)
+            else:
+                QMessageBox.critical(self, "[Requests Error]", response.data)
+
+        self.status_busy(Strings.Bar.ReadMsg)
+        GetPointREMsg(aux, self.user, self.proj, self.unit, self.point)
 
     def slot_common_download(self, scope: str):
         def aux():

@@ -31,7 +31,6 @@ def get_ce_msg(digest: str) -> str:
     try:
         text = raw_get(URL.CEMsg(digest)).text.replace(r"\n", '<br/>').removeprefix('"').removesuffix('"')
         text = "<pre>" + text + "</pre>"
-        print(text)
         return text
     except requests.Timeout:
         return "[Request Timeout]"

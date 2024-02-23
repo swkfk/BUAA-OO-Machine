@@ -14,6 +14,10 @@ class Strings:
         Hint = [Submitting, Unzipping,  Compiling, Running, Done]
 
         CE_Title = "编译错误！"
+        RE_Title = "运行时错误"
+        RE_Content = "至少有一个测试点运行时异常！ <br />"\
+                     "点击测试点序号的标签（例如 <code>#0</code>） <br />" \
+                     "查看 <code>RuntimeError</code> 信息。"
 
     class Ask:
         Title = "请输入 Java 主类，需要包含完整包名"

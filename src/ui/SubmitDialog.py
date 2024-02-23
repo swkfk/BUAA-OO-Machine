@@ -97,6 +97,11 @@ class SubmitDialog(QDialog):
                 error_dlg = QErrorMessage(self)
                 error_dlg.setWindowTitle(Strings.Status.CE_Title)
                 error_dlg.showMessage(get_ce_msg(self.digest))
+            if s == "Err::RE":
+                # Runtime Error
+                error_dlg = QErrorMessage(self)
+                error_dlg.setWindowTitle(Strings.Status.RE_Title)
+                error_dlg.showMessage(Strings.Status.RE_Content)
             # QMessageBox.critical(self, "Unknown Exception!", f"Unknown Status: {s}\n{repr(e)}")
             # return
         self.m_label_hint.setText(Strings.Status.Hint[index])

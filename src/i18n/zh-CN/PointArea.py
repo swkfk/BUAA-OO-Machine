@@ -21,8 +21,10 @@ class Strings:
 
     class Bar:
         Download = "正在下载 ..."
+        ReadMsg = "正在请求信息 ..."
         Ready = "就绪！"
 
     class MsgBox:
         Title = "下载完成"
         Content = "文件保存：{}"
+        RE_Title = "测试点运行信息"

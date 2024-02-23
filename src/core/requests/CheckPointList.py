@@ -14,5 +14,9 @@ def GetPointInfo(aux, user_name: str, proj_id: int, unit_id: int):
     __handler(aux, URL.PointList(user_name, proj_id, unit_id))
 
 
+def GetPointREMsg(aux, user_name: str, proj_id: int, unit_id: int, point_id: int):
+    __handler(aux, URL.REMsg(user_name, proj_id, unit_id, point_id))
+
+
 def ConnectTest(aux):
     __handler(aux, URL.ConnTest())

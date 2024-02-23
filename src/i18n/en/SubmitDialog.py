@@ -14,6 +14,10 @@ class Strings:
         Hint = [Submitting, Unzipping,  Compiling, Running, Done]
 
         CE_Title = "Compile Error!"
+        RE_Title = "Runtime Error!"
+        RE_Content = "At least one point occurred an exception! <br />"\
+                     "Click the index label of each points (such as the <code>#0</code>) <br />" \
+                     "to view the <code>RuntimeError</code> message."
 
     class Ask:
         Title = "Enter the Java Main Class, with the full package path"
