@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from core.fs import JsonLoader, DB_ROOT, COURSE_ROOT, USER_ROOT
+from core.fs import JsonLoader, DB_ROOT, COURSE_ROOT, USER_ROOT, GetPointTimestamp, POINT_ROOT
 
 router = APIRouter()
 
@@ -43,9 +43,18 @@ async def GetPointList(user: str, proj: int, unit: int):
     unit_obj = await JsonLoader(unit_path)
     lst = []
     for point_idx, point in enumerate(unit_obj):
+        timestamp = await GetPointTimestamp(proj, unit, point_idx)
+        ret_file = POINT_ROOT / f"{timestamp}" / "return_value" / user
+        if ret_file.exists():
+            ret = ret_file.read_text()
+        else:
+            ret = "<Not Submit Yet>"
+        if not ret.startswith("<"):
+            ret = "Return Value: " + ret
         lst.append({
             "same": [], "diff": [],  # TODO ///
-            "desc": point["desc"]
+            "desc": point["desc"],
+            "ret_desc": ret
         })
     return lst
 
