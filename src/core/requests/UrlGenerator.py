@@ -36,7 +36,7 @@ class URL:
 
     @staticmethod
     def Submit(user: str, proj: int, unit: int, class_base64: str):
-        return f"{URL.BaseUrl()}/submit?user={user}&proj={proj}&unit={unit}&class={class_base64}"
+        return f"{URL.BaseUrl()}/submit?user={user}&proj={proj}&unit={unit}&class_b64={class_base64}"
 
     @staticmethod
     def Upload(proj: int, unit: int, desc_base64: str):
