@@ -39,6 +39,10 @@ class URL:
         return f"{URL.BaseUrl()}/submit?user={user}&proj={proj}&unit={unit}&class_b64={class_base64}"
 
     @staticmethod
+    def CEMsg(digest: str):
+        return f"{URL.BaseUrl()}/errors/compile?digest={digest}"
+
+    @staticmethod
     def Upload(proj: int, unit: int, desc_base64: str):
         return f"{URL.BaseUrl()}/upload?proj={proj}&unit={unit}&desc={desc_base64}"
 

@@ -13,6 +13,8 @@ class Strings:
 
         Hint = [Submitting, Unzipping,  Compiling, Running, Done]
 
+        CE_Title = "编译错误！"
+
     class Ask:
         Title = "请输入 Java 主类，需要包含完整包名"
         Confirm = "确认"

@@ -1,7 +1,9 @@
 from PyQt6.QtCore import QSize, QRect, Qt
-from PyQt6.QtWidgets import QDialog, QLabel, QHBoxLayout, QRadioButton, QWidget, QLineEdit, QPushButton
+from PyQt6.QtWidgets import QDialog, QLabel, QHBoxLayout, QRadioButton, QWidget, QLineEdit, QPushButton, \
+    QErrorMessage
 
 from src.core.fs.SubmitThread import SubmitThread
+from src.core.requests.SubmitOperation import get_ce_msg
 from src.core.settings.JavaConfig import get_main_class, set_main_class, set_not_ask_each, get_ask_each
 from src.i18n import SubmitDialog as Strings
 
@@ -48,6 +50,7 @@ class SubmitDialog(QDialog):
     def __init__(self, parent, user, proj, unit):
         super().__init__(parent)
 
+        self.digest = ""
         if get_ask_each():
             dialog = AskMainClassDialog(parent)
             if QDialog.DialogCode.Rejected == dialog.exec():
@@ -87,8 +90,13 @@ class SubmitDialog(QDialog):
         try:
             index = ["Zipped", "Submitted", "Unzipped", "Compiled", "Done"].index(s)
         except ValueError as e:
-            print(f"Unhandled Status: {s}")
-            index = -1  # TODO: Handle this
+            print(f"Abnormal Status: {s}")
+            index = -1
+            if s == "Err::CE":
+                # Compile Error
+                error_dlg = QErrorMessage(self)
+                error_dlg.setWindowTitle(Strings.Status.CE_Title)
+                error_dlg.showMessage(get_ce_msg(self.digest))
             # QMessageBox.critical(self, "Unknown Exception!", f"Unknown Status: {s}\n{repr(e)}")
             # return
         self.m_label_hint.setText(Strings.Status.Hint[index])
@@ -96,4 +104,5 @@ class SubmitDialog(QDialog):
             self.m_btn_bubble[i].setChecked(i <= index)
 
     def slot_set_digest(self, s: str):
+        self.digest = s
         self.setWindowTitle(Strings.Window.Title.format(s))

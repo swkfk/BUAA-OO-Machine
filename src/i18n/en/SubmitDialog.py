@@ -13,6 +13,8 @@ class Strings:
 
         Hint = [Submitting, Unzipping,  Compiling, Running, Done]
 
+        CE_Title = "Compile Error!"
+
     class Ask:
         Title = "Enter the Java Main Class, with the full package path"
         Confirm = "Confirm"

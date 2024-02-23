@@ -34,7 +34,7 @@ class SubmitThread(QThread):
 
         # Poll the status
         status = "Submitted"
-        while status != "Done":
+        while status != "Done" and not status.startswith("Err"):
             sleep(0.7)
             status = get_status(digest)
             self.sig_status_update.emit(status)
