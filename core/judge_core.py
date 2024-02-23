@@ -24,9 +24,10 @@ class JudgeCore:
         self._add_status("Submitted")
 
         async def worker():
-            await self._unzip(),
-            await self._compile(),
-            await self._run_test()
+            await self._unzip()
+            ret = await self._compile()
+            if ret == 0:
+                await self._run_test()
 
         # With mass chaos! I hava a poor knowledge about async / await!
         def aux():
@@ -41,7 +42,7 @@ class JudgeCore:
         # Maybe this will be slow!
         threading.Thread(target=aux).start()
 
-    def _add_status(self, status: Literal["Submitted", "Unzipped", "Compiled", "Done"]):
+    def _add_status(self, status: Literal["Submitted", "Unzipped", "Compiled", "Done", "Err::CE"]):
         (self.status_path / status).touch(exist_ok=False)
 
     def _init_env(self):
@@ -66,15 +67,19 @@ class JudgeCore:
             lists.append(str(item))
         (self.target_path / "sources.list").write_text("\n".join(lists))
         # 2. Compile it!
-        Cmd("javac") \
+        ret = Cmd("javac") \
             .args(["-d", str(self.build_path)]) \
             .args(["-encoding", "utf-8"]) \
             .arg("-g") \
             .args(["-sourcepath", str(self.source_path)]) \
             .arg(f"@{self.target_path / 'sources.list'}") \
+            .stderr((self.target_path / "compile-msg.txt").open("w")) \
             .wait()
-
-        self._add_status("Compiled")
+        if ret != 0:
+            self._add_status("Err::CE")
+        else:
+            self._add_status("Compiled")
+        return ret
 
     async def _run_test(self):
         # 1. Get all the input files needed

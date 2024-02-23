@@ -69,7 +69,7 @@ async def CheckSubmitStatus(digest: str):
         "Done"      全部测评与比对工作已经完成
     """
     status_path = JAVA_ROOT / f"{digest}" / "status"
-    for status in ["Done", "Compiled", "Unzipped", "Submitted"]:
+    for status in ["Done", "Compiled", "Err::CE", "Unzipped", "Submitted"]:
         if (status_path / status).exists():
             return status
     assert False, "Status missed for all"  # TODO: /// Use `raise` instead of `assert False`

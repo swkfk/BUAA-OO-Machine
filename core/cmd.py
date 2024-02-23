@@ -49,7 +49,7 @@ class Cmd:
             cwd=self._cwd
         )
 
-    def wait(self, timeout_secs: int = None):
+    def wait(self, timeout_secs: int = None) -> int:
         if self._process is None:
             self.run()
         return self._process.wait(timeout_secs)
