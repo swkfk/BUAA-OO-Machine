@@ -1,9 +1,10 @@
 import os
 
-from PyQt6.QtCore import QRect, QSize, Qt
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QColor
 from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QMessageBox, QTextEdit, QGridLayout, QErrorMessage
 
-from src.core.ClickableLabel import ClickableLabel
+from src.ui.PointIndexLabel import PointIndexLabel
 from src.core.requests.CheckPointList import GetPointREMsg
 from src.core.requests.DownloadThread import DownloadThread
 from src.core.requests.RequestThread import RequestData
@@ -21,9 +22,14 @@ class UI:
         "all": (1, 2, 1, 2)
     }
 
+    class LabelColor:
+        Correct = QColor(255, 255, 128)
+        Diff = QColor(128, 128, 255)
+        Error = QColor(255, 36, 36)
+
 
 class PointArea(QWidget):
-    def __init__(self, idx, same_lst, diff_lst, desc, user: str, proj: int, unit: int, status_fn):
+    def __init__(self, idx, same_lst, diff_lst, desc, ret_desc, user: str, proj: int, unit: int, status_fn):
         super().__init__()
 
         self.download_thread = None
@@ -43,8 +49,9 @@ class PointArea(QWidget):
         self.m_layout_main.setColumnStretch(4, 10)
         self.setLayout(self.m_layout_main)
 
-        self.m_label_idx = ClickableLabel(Strings.Widget.Index.format(idx), self)
+        self.m_label_idx = PointIndexLabel(Strings.Widget.Index.format(idx), self)
         self.m_label_idx.clicked.connect(self.slot_request_re_msg)
+        self.m_label_idx.setToolTip(ret_desc)
         self.m_layout_main.addWidget(self.m_label_idx, 0, 0, 2, 1, Qt.AlignmentFlag.AlignCenter)
 
         self.m_label_same = QLabel(Strings.Widget.Same.format(len(same_lst)), self)
@@ -68,6 +75,15 @@ class PointArea(QWidget):
         for scope in ["input", "output", "all"]:
             self.m_layout_main.addWidget(self.m_btn_dict[scope], *UI.BtnPos[scope])
             self.m_btn_dict[scope].clicked.connect(self.slot_common_download(scope))
+
+        # Judge Correct
+        if ret_desc == "Return Value: 0":
+            if len(diff_lst) == 0:
+                self.m_label_idx.setBackgroundColor(UI.LabelColor.Correct)
+            else:
+                self.m_label_idx.setBackgroundColor(UI.LabelColor.Diff)
+        else:
+            self.m_label_idx.setBackgroundColor(UI.LabelColor.Error)
 
     def slot_request_re_msg(self):
         def aux(response: RequestData):
