@@ -107,7 +107,9 @@ class MainWidget(QMainWindow):
 
         # Update the data shown in the main widget
         self.proj_lst = []
+        self.old_proj_list = []
         self.unit_lst = []
+        self.old_unit_lst = []
         self.point_lst = []
         self.slot_update_proj()
 
@@ -170,6 +172,10 @@ class MainWidget(QMainWindow):
             else:
                 self.proj_lst = []
                 QMessageBox.critical(self, "[Projects] Unhandled Error!", response.data["."])
+            if self.old_proj_list == self.proj_lst:
+                self.slot_update_unit()
+                return
+            self.old_proj_list = self.proj_lst
             self.m_combo_proj.clear()
             self.m_combo_proj.addItems(self.proj_lst)
 
@@ -184,6 +190,10 @@ class MainWidget(QMainWindow):
             else:
                 self.unit_lst = []
                 QMessageBox.critical(self, "[Units] Unhandled Error!", response.data["."])
+            if self.old_unit_lst == self.unit_lst:
+                self.slot_update_point()
+                return
+            self.old_unit_lst = self.unit_lst
             self.m_combo_unit.clear()
             self.m_combo_unit.addItems(self.unit_lst)
 
