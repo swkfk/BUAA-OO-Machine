@@ -121,7 +121,7 @@ class MainWidget(QMainWindow):
         self.m_btn_upload.clicked.connect(self.slot_upload)
 
     def real_user(self):
-        return self.user_name if not self.temp_mode else "__TEST__" + self.user_name
+        return self.user_name if not self.temp_mode else "__TEMP__" + self.user_name
 
     def proj_id(self):
         return self.m_combo_proj.count() - self.m_combo_proj.currentIndex() - 1
