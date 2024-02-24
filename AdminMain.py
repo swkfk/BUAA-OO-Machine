@@ -92,8 +92,26 @@ def _add_op(argv: [str]):
     f.close()
 
 
+def _set_op(argv: [str]):
+    if len(argv) != 2:
+        raise ArgvCountError(len(argv), 2)
+
+    expect_item = ["version"]
+    if argv[1] not in expect_item:
+        raise ArgvWrongError(argv[1], expect_item)
+
+    version_file = "database/version"
+    if not os.path.exists(version_file):
+        with open(version_file, "w") as f:
+            f.write("0")
+    new_version = input("Enter the Frontend Program Version: ")
+    with open(version_file, "w") as f:
+        f.write(new_version)
+
+
 tasks = {
-    "add": _add_op
+    "add": _add_op,
+    "set": _set_op
 }
 
 if __name__ == "__main__":
