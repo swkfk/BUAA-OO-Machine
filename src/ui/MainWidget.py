@@ -121,7 +121,7 @@ class MainWidget(QMainWindow):
         self.m_btn_upload.clicked.connect(self.slot_upload)
 
     def real_user(self):
-        return self.user_name if not self.temp_mode else "__TEST__"
+        return self.user_name if not self.temp_mode else "__TEST__" + self.user_name
 
     def proj_id(self):
         return self.m_combo_proj.count() - self.m_combo_proj.currentIndex() - 1
@@ -209,6 +209,7 @@ class MainWidget(QMainWindow):
 
     def slot_submit(self):
         SubmitDialog(self, self.real_user(), self.proj_id(), self.unit_id())
+        self.slot_update_point()
 
     def slot_upload(self):
         UploadDialog(self,
