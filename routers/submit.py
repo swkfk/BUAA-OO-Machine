@@ -20,11 +20,12 @@ async def SubmitCode(user: str, proj: int, unit: int, class_b64: str, file: Uplo
     :param unit: 单元的 **编号**， 从 0 开始计数
     :param class_b64: 主类的 url-safe base64 编码
     :param file: 接收的文件对象
-    :return: 该次提交的代码摘要（使用 md5 算法）
+    :return: 该次提交的代码摘要（使用 md5 算法加盐）
     """
     file = await file.read()
-    digest = hashlib.md5(file).hexdigest()
     main_class = base64.urlsafe_b64decode(class_b64).decode('utf-8')
+    digest = hashlib.md5(file).hexdigest()
+    digest = hashlib.md5(f"@{proj}.{unit}#{digest}#BY:{user}#CALL:{main_class}".encode('utf-8')).hexdigest()
 
     point_user_file = COURSE_ROOT / f"{proj}" / f"{unit}.submit.json"
     if not point_user_file.exists():
