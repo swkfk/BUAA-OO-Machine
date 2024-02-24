@@ -1,5 +1,6 @@
 from typing import Callable
 
+from core.checker_cacher import LoadCheckerData, StoreCheckerData
 from core.default_checker import Fn as default_checker
 from core.fs import COURSE_ROOT, JsonLoader, DB_ROOT, GetPointTimestamp, POINT_ROOT
 from checkers import Checkers
@@ -35,16 +36,23 @@ async def GetDiffSame(proj: int, unit: int, point: int, user: str):
         return [], []
 
     self_stdout = (stdout_path / user).open("r")
+    self_digest = submit_obj[user]
 
     same, diff = [], []
     if compare_all:
-        for other_user, _ in submit_obj.items():
+        for other_user, other_digest in submit_obj.items():
             if other_user == user or other_user.startswith("__TEMP__"):
                 continue
-            res, _ = checker(fin=stdin, fout=self_stdout, fcmp=(stdout_path / other_user).open("r"))
+            res, msg = LoadCheckerData(self_digest, other_digest, proj, unit, point)
+            if res is None:
+                res, msg = checker(fin=stdin, fout=self_stdout, fcmp=(stdout_path / other_user).open("r"))
+                StoreCheckerData((res, msg), self_digest, other_digest, proj, unit, point)
             (same if res else diff).append(other_user)
     else:
-        res, info = checker(fin=stdin, fout=self_stdout)
-        (same if res else diff).append("[checker] " + info)
+        res, msg = LoadCheckerData(self_digest, self_digest, proj, unit, point)
+        if res is None:
+            res, msg = checker(fin=stdin, fout=self_stdout)
+            StoreCheckerData((res, msg), self_digest, self_digest, proj, unit, point)
+        (same if res else diff).append("[checker] " + msg)
 
     return same, diff
