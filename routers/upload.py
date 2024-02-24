@@ -5,6 +5,7 @@ import time
 from fastapi import APIRouter, UploadFile, File
 
 from core.fs import COURSE_ROOT, JsonLoader, POINT_ROOT
+from core.judge_core import JudgeCore
 
 router = APIRouter()
 
@@ -45,5 +46,7 @@ async def UploadTestPoint(proj: int, unit: int, desc: str, file: UploadFile = Fi
 
     f_json.close()
     f_stdin.close()
+
+    await JudgeCore.inc_test(proj, unit, len(unit_obj) - 1)
 
     return "Success!"

@@ -5,7 +5,8 @@ import zipfile
 from typing import Literal
 
 from core.cmd import Cmd
-from core.fs import SOURCE_ROOT, JAVA_ROOT, GetPointListOfTimestamp, POINT_ROOT
+from core.fs import SOURCE_ROOT, JAVA_ROOT, GetPointListOfTimestamp, POINT_ROOT, GetPointTimestamp, COURSE_ROOT, \
+    JsonLoader
 
 
 class JudgeCore:
@@ -119,3 +120,30 @@ class JudgeCore:
             base_path = POINT_ROOT / str(timestamp)
             (base_path / "return_value" / self.user).write_text("<Compile Error>")
             (base_path / "stderr" / self.user).write_text(compile_msg)
+
+    @staticmethod
+    async def inc_test(proj: int, unit: int, point: int):
+        timestamp = await GetPointTimestamp(proj, unit, point)
+        base_path = POINT_ROOT / str(timestamp)
+        submit_file = COURSE_ROOT / f"{proj}" / f"{unit}.submit.json"
+
+        if not submit_file.exists():
+            return
+
+        submit_obj = await JsonLoader(submit_file)
+        for user, digest in submit_obj.items():
+            main_class = (SOURCE_ROOT / f"{digest}.entry").read_text()
+            target_path = JAVA_ROOT / f"{digest}"
+
+            if (target_path / "status" / "Err::CE").exists():
+                continue
+
+            ret = Cmd("java") \
+                .arg(main_class) \
+                .args(["-cp", "."]) \
+                .cwd(str(target_path / "class")) \
+                .stdin(open(base_path / "stdin", "r")) \
+                .stdout(open(base_path / "stdout" / user, "w")) \
+                .stderr(open(base_path / "stderr" / user, "w")) \
+                .wait()
+            (base_path / "return_value" / user).write_text(str(ret))
