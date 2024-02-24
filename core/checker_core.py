@@ -28,14 +28,12 @@ async def GetDiffSame(proj: int, unit: int, point: int, user: str):
     timestamp = await GetPointTimestamp(proj, unit, point)
     stdout_path = POINT_ROOT / f"{timestamp}" / "stdout"
     ret_v_path = POINT_ROOT / f"{timestamp}" / "return_value"
-    stdin = (POINT_ROOT / f"{timestamp}" / "stdin").open("r")
 
     if not (ret_v_path / user).exists():
         return [], []
     if "0" != (ret_v_path / user).read_text():
         return [], []
 
-    self_stdout = (stdout_path / user).open("r")
     self_digest = submit_obj[user]
 
     same, diff = [], []
@@ -45,13 +43,20 @@ async def GetDiffSame(proj: int, unit: int, point: int, user: str):
                 continue
             res, msg = LoadCheckerData(self_digest, other_digest, proj, unit, point)
             if res is None:
-                res, msg = checker(fin=stdin, fout=self_stdout, fcmp=(stdout_path / other_user).open("r"))
+                res, msg = checker(
+                    fin=(POINT_ROOT / f"{timestamp}" / "stdin").open("r"),
+                    fout=(stdout_path / user).open("r"),
+                    fcmp=(stdout_path / other_user).open("r")
+                )
                 StoreCheckerData((res, msg), self_digest, other_digest, proj, unit, point)
             (same if res else diff).append(other_user)
     else:
         res, msg = LoadCheckerData(self_digest, self_digest, proj, unit, point)
         if res is None:
-            res, msg = checker(fin=stdin, fout=self_stdout)
+            res, msg = checker(
+                fin=(POINT_ROOT / f"{timestamp}" / "stdin").open("r"),
+                fout=(stdout_path / user).open("r")
+            )
             StoreCheckerData((res, msg), self_digest, self_digest, proj, unit, point)
         (same if res else diff).append("[checker] " + msg)
 
