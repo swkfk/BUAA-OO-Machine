@@ -53,42 +53,42 @@ class MainWidget(QMainWindow):
         )
         self.resize(UI.WindowSize)
 
-        self.m_layout_main = QVBoxLayout(self)
         self.m_widget_center = QWidget(self)
+        self.m_layout_main = QVBoxLayout(self.m_widget_center)
         self.setCentralWidget(self.m_widget_center)
         self.m_widget_center.setLayout(self.m_layout_main)
 
         # Component declaration
-        self.m_widget_btn = QWidget(self)
+        self.m_widget_btn = QWidget(self.m_widget_center)
 
-        self.m_grid_btn = QGridLayout()
+        self.m_grid_btn = QGridLayout(self.m_widget_btn)
         for c, s in [(0, 1), (1, 2), (2, 1), (3, 1)]:
             self.m_grid_btn.setColumnStretch(c, s)
 
-        self.m_btn_user = QPushButton(self)
+        self.m_btn_user = QPushButton(self.m_widget_btn)
         self.m_btn_user.setText(Strings.UserMode.BtnTemp if self.temp_mode else Strings.UserMode.BtnUser)
         self.m_grid_btn.addWidget(self.m_btn_user)
 
-        self.m_combo_proj = QComboBox(self)
+        self.m_combo_proj = QComboBox(self.m_widget_btn)
         self.m_grid_btn.addWidget(self.m_combo_proj)
 
-        self.m_btn_sync = QPushButton(Strings.Sync.Btn, self)
+        self.m_btn_sync = QPushButton(Strings.Sync.Btn, self.m_widget_btn)
         self.m_grid_btn.addWidget(self.m_btn_sync)
 
-        self.m_btn_upload = QPushButton(Strings.UploadData.Btn, self)
+        self.m_btn_upload = QPushButton(Strings.UploadData.Btn, self.m_widget_btn)
         self.m_grid_btn.addWidget(self.m_btn_upload)
 
-        self.m_btn_setting = QPushButton(Strings.Setting.Btn, self)
+        self.m_btn_setting = QPushButton(Strings.Setting.Btn, self.m_widget_btn)
         self.m_grid_btn.addWidget(self.m_btn_setting)
 
-        self.m_combo_unit = QComboBox(self)
+        self.m_combo_unit = QComboBox(self.m_widget_btn)
         self.m_grid_btn.addWidget(self.m_combo_unit)
 
-        self.m_btn_history = QPushButton(Strings.History.Btn, self)
+        self.m_btn_history = QPushButton(Strings.History.Btn, self.m_widget_btn)
         self.m_grid_btn.addWidget(self.m_btn_history)
         self.m_btn_history.setEnabled(not self.temp_mode)
 
-        self.m_btn_submit = QPushButton(Strings.Submit.Btn, self)
+        self.m_btn_submit = QPushButton(Strings.Submit.Btn, self.m_widget_btn)
         self.m_grid_btn.addWidget(self.m_btn_submit)
 
         self.m_widget_btn.setLayout(self.m_grid_btn)
@@ -97,7 +97,7 @@ class MainWidget(QMainWindow):
         self.m_widget_list_point = []
         self.m_widget_point = QWidget()
         self.m_layout_point = QVBoxLayout()
-        self.m_scroll_point = QScrollArea(self)
+        self.m_scroll_point = QScrollArea(self.m_widget_center)
         self.m_layout_main.addWidget(self.m_scroll_point)
 
         self.status_ready()
