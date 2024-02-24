@@ -1,4 +1,5 @@
 __pycache__/
 .idea/
 database/
-checkers/
+checkers/*
+!checkers/__init__.py

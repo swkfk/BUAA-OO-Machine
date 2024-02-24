@@ -2,6 +2,7 @@ from typing import Callable
 
 from core.default_checker import Fn as default_checker
 from core.fs import COURSE_ROOT, JsonLoader, DB_ROOT, GetPointTimestamp, POINT_ROOT
+from checkers import Checkers
 
 
 async def GetDiffSame(proj: int, unit: int, point: int, user: str):
@@ -14,15 +15,14 @@ async def GetDiffSame(proj: int, unit: int, point: int, user: str):
 
     course_obj = await JsonLoader(DB_ROOT / "course.json")
     unit_obj = course_obj[proj]["units"][unit]
-    checker: str = unit_obj["judge"]
+    checker_s: str = unit_obj["judge"]
 
-    if checker == "":
+    if checker_s == "":
         checker: Callable = default_checker
         compare_all = True
     else:
-        # TODO: ///
-        checker: Callable = lambda: True
-        compare_all = False
+        checker: Callable = Checkers[checker_s][1]
+        compare_all = Checkers[checker_s][0]
 
     timestamp = await GetPointTimestamp(proj, unit, point)
     stdout_path = POINT_ROOT / f"{timestamp}" / "stdout"
@@ -45,6 +45,6 @@ async def GetDiffSame(proj: int, unit: int, point: int, user: str):
             (same if res else diff).append(other_user)
     else:
         res, info = checker(fin=stdin, fout=self_stdout)
-        (same if res else diff).append(info)
+        (same if res else diff).append("[checker] " + info)
 
     return same, diff
