@@ -1,6 +1,6 @@
 class Strings:
     class Window:
-        Title = "上传代码 - {}"
+        Title = "提交代码 - {}"
         Wait = "等待上传"
 
     class Status:

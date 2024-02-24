@@ -3,7 +3,7 @@ class Strings:
         Title = "设置 - 修改即时生效"
 
     class Common:
-        Unknown = "<Undefined>"
+        Unknown = "<未定义>"
 
     class FileSystemSetting:
         Title = "文件路径配置"
@@ -14,7 +14,7 @@ class Strings:
         Title = "Java 配置"
         MainClass = "Java 主类"
         MainClassHint = "（包含完整包名）"
-        AskEach = "每次询问"
+        AskEach = "每次提交时询问"
 
     class ConnectionSetting:
         Title = "连接配置"
@@ -23,7 +23,7 @@ class Strings:
         UrlHolder = "地址"
         PortHolder = "端口号"
         Label = "{}... {}"
-        Testing = "Connecting..."
+        Testing = "连接中..."
 
     class SystemConfig:
         Title = "系统配置"

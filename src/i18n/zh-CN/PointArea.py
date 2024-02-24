@@ -11,7 +11,7 @@ class Strings:
     class Download:
         Input = "保存 Stdin"
         Output = "保存 Stdout"
-        Others = "保存其他人的 Stdout"
+        Others = "保存所有人的 Stdout"
 
         Dict = {
             "input": Input,

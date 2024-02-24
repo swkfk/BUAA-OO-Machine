@@ -8,7 +8,7 @@ class Strings:
         Number = "{} / {}"
 
     class Info:
-        Digest = "代码摘要 - {}"
+        Digest = "提交摘要 - {}"
         Time = "提交时间 - {}"
 
     class Download:

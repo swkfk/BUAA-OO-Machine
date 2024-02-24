@@ -22,7 +22,7 @@ class Strings:
         Btn = "提交记录"
 
     class Submit:
-        Btn = "上传代码"
+        Btn = "提交代码"
 
     class Setting:
         Btn = "设置"

@@ -8,7 +8,7 @@ class Strings:
 
     class File:
         Btn = "选择文件..."
-        Unknown = "<Empty>"
+        Unknown = "<未选择>"
         Desc = "选择数据文件"
 
     class Desc:
