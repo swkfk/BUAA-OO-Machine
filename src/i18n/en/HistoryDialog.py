@@ -16,3 +16,7 @@ class Strings:
 
     class Status:
         BusyUpdateHistory = "Update the history ..."
+
+    class WrongPath:
+        Title = "Invalid Download Path"
+        Content = "Invalid Download Path: ' {} ' \nPlease check and modify it in 'Settings'"

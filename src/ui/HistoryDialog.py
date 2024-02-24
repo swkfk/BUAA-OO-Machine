@@ -1,4 +1,5 @@
 import os.path
+import pathlib
 
 from PyQt6.QtCore import QSize, QRect, Qt
 from PyQt6.QtWidgets import QDialog, QPushButton, QLabel, QProgressBar, QMessageBox
@@ -118,8 +119,10 @@ class HistoryDialog(QDialog):
 
     def slot_download_start(self):
         self.m_progress.setValue(0)
+
         path = self.config.get_storage_path()
-        if path == "":
+        if path.strip() == "" or not pathlib.Path(path).is_dir():
+            QMessageBox.critical(self, Strings.WrongPath.Title, Strings.WrongPath.Content.format(path))
             return
 
         self.download_thread: DownloadThread = DownloadThread(

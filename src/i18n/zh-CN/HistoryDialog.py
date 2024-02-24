@@ -16,3 +16,7 @@ class Strings:
 
     class Status:
         BusyUpdateHistory = "更新提交记录 ..."
+
+    class WrongPath:
+        Title = "下载路径错误"
+        Content = "非法的下载路径：' {} ' \n请前往 “设置” 检查、修改。"

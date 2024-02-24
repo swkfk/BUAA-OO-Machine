@@ -1,9 +1,12 @@
+import pathlib
+
 from PyQt6.QtCore import QSize, QRect, Qt
 from PyQt6.QtWidgets import QDialog, QLabel, QHBoxLayout, QRadioButton, QWidget, QLineEdit, QPushButton, \
-    QErrorMessage
+    QErrorMessage, QMessageBox
 
 from src.core.fs.SubmitThread import SubmitThread
 from src.core.requests.SubmitOperation import get_ce_msg
+from src.core.settings.FileSystemConfig import FileSystemConfig
 from src.core.settings.JavaConfig import get_main_class, set_main_class, set_not_ask_each, get_ask_each
 from src.i18n import SubmitDialog as Strings
 
@@ -49,6 +52,12 @@ class AskMainClassDialog(QDialog):
 class SubmitDialog(QDialog):
     def __init__(self, parent, user, proj, unit):
         super().__init__(parent)
+
+        src_path = FileSystemConfig().get_src_path()
+        if src_path.strip() == "" or not pathlib.Path(src_path).is_dir():
+            self.done(QDialog.DialogCode.Rejected)
+            QMessageBox.critical(parent, Strings.WrongPath.Title, Strings.WrongPath.Content.format(src_path))
+            return
 
         self.digest = ""
         if get_ask_each():

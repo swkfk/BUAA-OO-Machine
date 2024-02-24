@@ -28,3 +28,7 @@ class Strings:
         Title = "下载完成"
         Content = "文件保存：{}"
         RE_Title = "测试点运行信息"
+
+    class WrongPath:
+        Title = "下载路径错误"
+        Content = "非法的下载路径：' {} ' \n请前往 “设置” 检查、修改。"

@@ -24,3 +24,7 @@ class Strings:
         Confirm = "确认"
         Cancel = "取消"
         NoAskMore = "确认（不再询问）"
+
+    class WrongPath:
+        Title = "源代码路径错误"
+        Content = "非法的源代码路径：' {} ' \n请前往 “设置” 检查、修改。"

@@ -24,3 +24,7 @@ class Strings:
         Confirm = "Confirm"
         Cancel = "Cancel"
         NoAskMore = "Confirm (Without Asking More)"
+
+    class WrongPath:
+        Title = "Invalid Source Path"
+        Content = "Invalid Source Path: ' {} ' \nPlease check and modify it in 'Settings'"

@@ -1,4 +1,5 @@
 import os
+import pathlib
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor
@@ -104,8 +105,12 @@ class PointArea(QWidget):
             self.status_busy(Strings.Bar.Download)
 
             path = self.config.get_storage_path()
-            if path == "":
+            if path.strip() == "" or not pathlib.Path(path).is_dir():
+                QMessageBox.critical(self, Strings.WrongPath.Title, Strings.WrongPath.Content.format(path))
+                self.m_btn_dict[scope].setText(Strings.Download.Dict[scope])
+                self.status_ready()
                 return
+
             url = URL.DownloadInout(scope, self.user, self.proj, self.unit, self.point)
             suffix = "zip" if scope == "all" else "txt"
             path = os.path.join(

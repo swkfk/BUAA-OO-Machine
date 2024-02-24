@@ -28,3 +28,7 @@ class Strings:
         Title = "Successfully Downloaded"
         Content = "File Saved At: {}"
         RE_Title = "Runtime Information"
+
+    class WrongPath:
+        Title = "Invalid Download Path"
+        Content = "Invalid Download Path: ' {} ' \nPlease check and modify it in 'Settings'"
