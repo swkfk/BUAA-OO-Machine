@@ -1,8 +1,8 @@
 class Strings:
 
     class Window:
-        Title = "BUAA OO Machine - "
-        TempTitle = " [TEMP MODE]"
+        Title = "BUAA OO Machine Ver{} - {} {}"
+        TempTitle = "[临时用户模式]"
 
     class UserMode:
         BtnUser = "切换到临时用户"
@@ -32,3 +32,7 @@ class Strings:
         BusyUpdateProject = "读取 Project 列表 ..."
         BusyUpdateUnit = "读取 Unit 列表 ..."
         BusyUpdatePoint = "读取 Point 列表 ..."
+
+    class Upgrade:
+        Title = "有可用更新"
+        Content = "当前版本：{} \n最新版本：{}"

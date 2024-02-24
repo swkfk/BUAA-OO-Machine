@@ -53,3 +53,7 @@ class URL:
     @staticmethod
     def DownloadInout(scope: str, user: str, proj: int, unit: int, point: int):
         return f"{URL.BaseUrl()}/{scope}?user={user}&proj={proj}&unit={unit}&point={point}"
+
+    @staticmethod
+    def CheckUpgrade():
+        return f"{URL.BaseUrl()}/upgrade"

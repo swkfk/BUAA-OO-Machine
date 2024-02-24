@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import QDialog, QGridLayout, QGroupBox, QPushButton, QLineE
     QLabel, QRadioButton, QWidget, QVBoxLayout, QCheckBox
 
 from src.core.Reboot import reboot
-from src.core.requests.CheckPointList import ConnectTest
+from src.core.requests.SimpleQueryRequests import ConnectTest
 from src.core.requests.RequestThread import RequestData
 from src.core.settings.I18nConfig import set_lang, get_lang
 from src.core.settings.JavaConfig import set_main_class, get_main_class, get_ask_each, set_ask_each

@@ -4,7 +4,9 @@ from PyQt6.QtCore import QSize, QRect, QCoreApplication, QProcess
 from PyQt6.QtWidgets import QWidget, QPushButton, QComboBox, QVBoxLayout, QScrollArea, QMainWindow, QMessageBox, \
     QGridLayout
 
+from src.core import SysInfo
 from src.core.Reboot import reboot
+from src.core.requests.CommonRequests import callback_handler
 from src.core.requests.RequestThread import RequestData
 from src.core.settings.SystemConfig import get_theme
 from src.ui.I18nDialog import I18nDialog
@@ -12,7 +14,7 @@ from src.ui.PointArea import PointArea
 from src.ui.RegisterDialog import RegisterDialog
 from src.ui.HistoryDialog import HistoryDialog
 from src.core.settings import LocalAuthentic
-from src.core.requests.CheckPointList import GetProjList, GetUnitList, GetPointInfo
+from src.core.requests.SimpleQueryRequests import GetProjList, GetUnitList, GetPointInfo, GetNewVersion
 from src.i18n import MainWidget as Strings
 from src.ui.SettingDialog import SettingDialog
 from src.ui.SubmitDialog import SubmitDialog
@@ -46,8 +48,9 @@ class MainWidget(QMainWindow):
         self.user_name = self.user.user_name()
         self.temp_mode = self.user.temp_mode()
 
-        self.setWindowTitle(Strings.Window.Title + self.user_name +
-                            (Strings.Window.TempTitle if self.temp_mode else ""))
+        self.setWindowTitle(Strings.Window.Title.format(
+            SysInfo.VERSION, self.user_name, Strings.Window.TempTitle if self.temp_mode else "")
+        )
         self.resize(UI.WindowSize)
 
         self.m_layout_main = QVBoxLayout(self)
@@ -109,6 +112,7 @@ class MainWidget(QMainWindow):
         self.slot_update_proj()
 
         self.show()
+        self.check_upgrade()
 
     def signal_bind(self):
         self.m_btn_user.clicked.connect(self.slot_user_mode_change)
@@ -119,6 +123,19 @@ class MainWidget(QMainWindow):
         self.m_combo_unit.currentIndexChanged.connect(self.slot_update_point)
         self.m_btn_submit.clicked.connect(self.slot_submit)
         self.m_btn_upload.clicked.connect(self.slot_upload)
+
+    def check_upgrade(self):
+        def aux(response: RequestData):
+            if response.status_code != 200:
+                return
+            new_version = response.data
+            now_version = SysInfo.VERSION
+            if new_version <= now_version:
+                return
+            QMessageBox.information(self, Strings.Upgrade.Title,
+                                    Strings.Upgrade.Content.format(now_version, new_version))
+
+        GetNewVersion(aux)
 
     def real_user(self):
         return self.user_name if not self.temp_mode else "__TEMP__" + self.user_name

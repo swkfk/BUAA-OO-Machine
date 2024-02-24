@@ -20,3 +20,7 @@ def GetPointREMsg(aux, user_name: str, proj_id: int, unit_id: int, point_id: int
 
 def ConnectTest(aux):
     __handler(aux, URL.ConnTest())
+
+
+def GetNewVersion(aux):
+    __handler(aux, URL.CheckUpgrade())

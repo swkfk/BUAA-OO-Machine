@@ -5,7 +5,7 @@ from PyQt6.QtGui import QColor
 from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QMessageBox, QTextEdit, QGridLayout, QErrorMessage
 
 from src.ui.PointIndexLabel import PointIndexLabel
-from src.core.requests.CheckPointList import GetPointREMsg
+from src.core.requests.SimpleQueryRequests import GetPointREMsg
 from src.core.requests.DownloadThread import DownloadThread
 from src.core.requests.RequestThread import RequestData
 from src.core.requests.UrlGenerator import URL
