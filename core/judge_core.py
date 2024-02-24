@@ -11,6 +11,7 @@ from core.fs import SOURCE_ROOT, JAVA_ROOT, GetPointListOfTimestamp, POINT_ROOT
 class JudgeCore:
     def __init__(self, digest: str, sys_info: (str, int, int)):
         self.user, self.proj, self.unit = sys_info
+        self.digest = digest
         self.zipped_file = SOURCE_ROOT / f"{digest}.zip"
         self.target_path = JAVA_ROOT / f"{digest}"
         self.status_path = self.target_path / "status"
@@ -28,6 +29,8 @@ class JudgeCore:
             ret = await self._compile()
             if ret == 0:
                 await self._run_test()
+            else:
+                await self._set_ce()
 
         # With mass chaos! I hava a poor knowledge about async / await!
         def aux():
@@ -107,3 +110,12 @@ class JudgeCore:
             self._add_status("Err::RE")
         else:
             self._add_status("Done")
+
+    async def _set_ce(self):
+        lst: [int] = await GetPointListOfTimestamp(self.proj, self.unit)
+        compile_msg = \
+            (self.target_path / "compile-msg.txt").read_text().replace(f"database/java/{self.digest}/", "")
+        for timestamp in lst:
+            base_path = POINT_ROOT / str(timestamp)
+            (base_path / "return_value" / self.user).write_text("<Compile Error>")
+            (base_path / "stderr" / self.user).write_text(compile_msg)

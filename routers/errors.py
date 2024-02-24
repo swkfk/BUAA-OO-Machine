@@ -16,6 +16,10 @@ async def GetCEMsg(digest: str):
 @router.get("/errors/runtime")
 async def GetREMsg(user: str, proj: int, unit: int, point: int):
     timestamp = await GetPointTimestamp(proj, unit, point)
-    ret = (POINT_ROOT / f"{timestamp}" / "return_value" / user).read_text()
-    text = (POINT_ROOT / f"{timestamp}" / "stderr" / user).read_text()
+    try:
+        ret = (POINT_ROOT / f"{timestamp}" / "return_value" / user).read_text()
+        text = (POINT_ROOT / f"{timestamp}" / "stderr" / user).read_text()
+    except FileNotFoundError:
+        ret = "<Not Submit Yet>"
+        text = ""
     return f"<pre><b>Return Value: {html.escape(ret)} </b><br /> {html.escape(text)}</pre>"
