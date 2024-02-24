@@ -22,4 +22,4 @@ async def GetREMsg(user: str, proj: int, unit: int, point: int):
     except FileNotFoundError:
         ret = "<Not Submit Yet>"
         text = ""
-    return f"<pre><b>Return Value: {html.escape(ret)} </b><br /> {html.escape(text)}</pre>"
+    return f"<pre><b>Return Value: {html.escape(ret)}</b><br />{html.escape(text)}</pre>"
