@@ -232,6 +232,7 @@ class MainWidget(QMainWindow):
         UploadDialog(self,
                      self.proj_id(), self.m_combo_proj.currentText(),
                      self.unit_id(), self.m_combo_unit.currentText())
+        self.slot_update_point()
 
     def status_ready(self):
         self.statusBar().showMessage(Strings.Status.Ready, 0)
