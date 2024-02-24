@@ -61,6 +61,8 @@ async def ZipOutputs(path: str):
     zf = ZipFile(tf, "w")
 
     for file in Path(path).glob("*"):
+        if file.name.startswith("__TEMP__"):
+            continue
         zf.write(file, arcname=file.relative_to(path))
     zf.close()
     tf.seek(os.SEEK_SET)
