@@ -25,7 +25,7 @@ class I18nDialog(QDialog):
         self.ui = UI(len(lang_list))
 
         self.setWindowTitle(" ")
-        self.resize(self.ui.Size())
+        self.setFixedSize(self.ui.Size())
 
         self.btn_lst = []
         for i, (code, text) in enumerate(lang_list):

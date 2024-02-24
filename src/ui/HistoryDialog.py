@@ -13,9 +13,9 @@ from src.core.settings.FileSystemConfig import FileSystemConfig
 
 class UI:
     WindowSize = QSize(400, 200)
-    BtnNextGeo = QRect(240, 160, 20, 20)
-    BtnPrevGeo = QRect(140, 160, 20, 20)
-    LabelNumberGeo = QRect(180, 160, 40, 20)
+    BtnNextGeo = QRect(250, 160, 20, 20)
+    BtnPrevGeo = QRect(130, 160, 20, 20)
+    LabelNumberGeo = QRect(140, 160, 120, 20)
     LabelDigest = QRect(20, 20, 360, 30)
     LabelTime = QRect(20, 60, 360, 30)
     BtnDownloadGeo = QRect(20, 100, 80, 25)
@@ -33,7 +33,7 @@ class HistoryDialog(QDialog):
 
         # Window appearance
         self.setWindowTitle(Strings.Window.Title.format(self.user_name))
-        self.resize(UI.WindowSize)
+        self.setFixedSize(UI.WindowSize)
 
         # Get the history list
         self.history_list = []
@@ -41,6 +41,10 @@ class HistoryDialog(QDialog):
         self.update_history()
 
         # Window Components
+        self.m_label_number = QLabel(self)
+        self.m_label_number.setGeometry(UI.LabelNumberGeo)
+        self.m_label_number.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
         self.m_btn_next = QPushButton(Strings.Pick.Next, self)
         self.m_btn_next.setGeometry(UI.BtnNextGeo)
         self.m_btn_next.clicked.connect(self.slot_page_next)
@@ -48,10 +52,6 @@ class HistoryDialog(QDialog):
         self.m_btn_prev = QPushButton(Strings.Pick.Prev, self)
         self.m_btn_prev.setGeometry(UI.BtnPrevGeo)
         self.m_btn_prev.clicked.connect(self.slot_page_prev)
-
-        self.m_label_number = QLabel(self)
-        self.m_label_number.setGeometry(UI.LabelNumberGeo)
-        self.m_label_number.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.m_label_digest = QLabel(self)
         self.m_label_digest.setGeometry(UI.LabelDigest)

@@ -24,7 +24,7 @@ class AskMainClassDialog(QDialog):
     def __init__(self, parent):
         super().__init__(parent)
 
-        self.resize(UI.AskSize)
+        self.setFixedSize(UI.AskSize)
         self.setWindowTitle(Strings.Ask.Title)
 
         self.m_input = QLineEdit(get_main_class(), self)
