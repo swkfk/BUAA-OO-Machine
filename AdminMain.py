@@ -54,7 +54,7 @@ def _add_op(argv: [str]):
     for proj_id, proj in enumerate(obj):
         print(f"#{proj_id}: {proj['title']}")
         for unit_id, unit in enumerate(proj['units']):
-            print(f"->#{unit_id}: {unit}")
+            print(f"->#{unit_id}: {unit['title']} <Checker: {unit['judge']}>")
     print("======== *********** ========")
     f.close()
 
@@ -76,7 +76,11 @@ def _add_op(argv: [str]):
         if proj_id < 0 or proj_id >= len(obj):
             raise InputError(proj_id, "Index out of range")
         title = input("Enter the new unit title: ")
-        obj[proj_id]["units"].append(title)
+        judge = input("Enter the judge-method (Empty Means Default): ")
+        obj[proj_id]["units"].append({
+            "title": title,
+            "judge": judge
+        })
 
         unit_file = f"{len(obj[proj_id]['units']) - 1}.json"
         (Path("database/course") / str(proj_id) / unit_file).write_text("[]")

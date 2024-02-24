@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from core.checker_core import GetDiffSame
 from core.fs import JsonLoader, DB_ROOT, COURSE_ROOT, USER_ROOT, GetPointTimestamp, POINT_ROOT
 
 router = APIRouter()
@@ -12,7 +13,7 @@ async def GetProjList():
     :return: 由字符串组成的列表，每个元素即为项目名，有序
     """
     obj = await JsonLoader(DB_ROOT / "course.json")
-    return list(map(lambda x: x["title"], obj))
+    return [p["title"] for p in obj]
 
 
 @router.get("/unit")
@@ -24,7 +25,7 @@ async def GetUnitList(proj: int):
     """
     obj = await JsonLoader(DB_ROOT / "course.json")
     # TODO /// Error handler (Index out of the boundary)
-    return obj[proj]["units"]
+    return [u["title"] for u in obj[proj]["units"]]
 
 
 @router.get("/point")
@@ -51,8 +52,9 @@ async def GetPointList(user: str, proj: int, unit: int):
             ret = "<Not Submit Yet>"
         if not ret.startswith("<"):
             ret = "Return Value: " + ret
+        same, diff = await GetDiffSame(proj, unit, point_idx, user)
         lst.append({
-            "same": [], "diff": [],  # TODO ///
+            "same": same, "diff": diff,
             "desc": point["desc"],
             "ret_desc": ret
         })
