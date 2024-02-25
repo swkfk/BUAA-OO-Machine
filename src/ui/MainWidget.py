@@ -8,7 +8,7 @@ from src.core import SysInfo
 from src.core.Reboot import reboot
 from src.core.requests.CommonRequests import callback_handler
 from src.core.requests.RequestThread import RequestData
-from src.core.settings.SystemConfig import get_theme
+from src.core.settings.SystemConfig import get_theme, check_version
 from src.ui.I18nDialog import I18nDialog
 from src.ui.PointArea import PointArea
 from src.ui.RegisterDialog import RegisterDialog
@@ -16,6 +16,7 @@ from src.ui.HistoryDialog import HistoryDialog
 from src.core.settings import LocalAuthentic
 from src.core.requests.SimpleQueryRequests import GetProjList, GetUnitList, GetPointInfo, GetNewVersion
 from src.i18n import MainWidget as Strings
+from src.i18n import ChangeLog
 from src.ui.SettingDialog import SettingDialog
 from src.ui.SubmitDialog import SubmitDialog
 from src.ui.UploadDialog import UploadDialog
@@ -114,6 +115,8 @@ class MainWidget(QMainWindow):
         self.slot_update_proj()
 
         self.show()
+
+        self.check_version()
         self.check_upgrade()
 
     def signal_bind(self):
@@ -125,6 +128,15 @@ class MainWidget(QMainWindow):
         self.m_combo_unit.currentIndexChanged.connect(self.slot_update_point)
         self.m_btn_submit.clicked.connect(self.slot_submit)
         self.m_btn_upload.clicked.connect(self.slot_upload)
+
+    def check_version(self):
+        s = []
+        due_version = check_version(SysInfo.VERSION)
+        for version, content in ChangeLog.items():
+            if version > due_version:
+                s.append(f"Ver {version} {content}")
+        if len(s) != 0:
+            QMessageBox.information(self, Strings.ChangeLog.Title, "\n\n".join(s))
 
     def check_upgrade(self):
         def aux(response: RequestData):

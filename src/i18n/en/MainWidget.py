@@ -36,3 +36,6 @@ class Strings:
     class Upgrade:
         Title = "Updates Available"
         Content = "Now Version: {} \nThe Latest: {}"
+
+    class ChangeLog:
+        Title = "Change Log"

@@ -36,3 +36,6 @@ class Strings:
     class Upgrade:
         Title = "有可用更新"
         Content = "当前版本：{} \n最新版本：{}"
+
+    class ChangeLog:
+        Title = "更新内容"

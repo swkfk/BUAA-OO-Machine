@@ -12,6 +12,8 @@ SettingDialog = _i18n.SettingDialog.Strings
 SubmitDialog = _i18n.SubmitDialog.Strings
 UploadDialog = _i18n.UploadDialog.Strings
 
+ChangeLog = _i18n.ChangeLog.ChangeLog
+
 # Expose to the Setting Dialog
 lang_list = [
     ('en', "English"),

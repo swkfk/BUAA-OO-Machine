@@ -24,3 +24,11 @@ def is_dark_theme():
 
 def set_theme(s):
     _sys_config["theme"] = s
+
+
+def check_version(now_version: str):
+    if "version" not in _sys_config:
+        _sys_config["version"] = "000000"
+    old_version = _sys_config["version"]
+    _sys_config["version"] = now_version
+    return old_version
