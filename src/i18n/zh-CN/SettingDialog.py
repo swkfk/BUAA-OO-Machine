@@ -9,8 +9,8 @@ class Strings:
         Title = "文件配置"
         Storage = "下载路径..."
         Src = "源代码路径..."
-        Passwd = "压缩包密码"
-        PasswdHint = "留空则不设置密码"
+        Passwd = "压缩包密钥"
+        PasswdHint = "留空则不进行加密"
 
     class JavaSetting:
         Title = "Java 配置"
