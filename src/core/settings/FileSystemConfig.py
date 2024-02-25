@@ -18,6 +18,14 @@ class FileSystemConfig:
     def set_src_path(self, path):
         self.fs_config["src"] = path
 
+    def get_zip_passwd(self):
+        if "passwd" not in self.fs_config:
+            self.fs_config["passwd"] = ""
+        return self.fs_config["passwd"]
+
+    def set_zip_passwd(self, passwd: str):
+        self.fs_config["passwd"] = passwd
+
     @staticmethod
     def check_access(path):
         try:

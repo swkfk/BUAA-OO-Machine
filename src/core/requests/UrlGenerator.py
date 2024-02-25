@@ -39,8 +39,11 @@ class URL:
         return f"{URL.BaseUrl()}/status?digest={digest}"
 
     @staticmethod
-    def Submit(user: str, proj: int, unit: int, class_base64: str):
-        return f"{URL.BaseUrl()}/submit?user={user}&proj={proj}&unit={unit}&class_b64={class_base64}"
+    def Submit(user: str, proj: int, unit: int, class_base64: str, passwd: str = None, salt: str = None):
+        if passwd is None or salt is None:
+            return f"{URL.BaseUrl()}/submit?user={user}&proj={proj}&unit={unit}&class_b64={class_base64}"
+        return f"{URL.BaseUrl()}/submit?user={user}&proj={proj}&unit={unit}&" \
+               f"class_b64={class_base64}&passwd={passwd}&salt={salt}"
 
     @staticmethod
     def CEMsg(digest: str):

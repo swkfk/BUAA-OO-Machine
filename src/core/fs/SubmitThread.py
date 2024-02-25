@@ -19,12 +19,12 @@ class SubmitThread(QThread):
     def run(self):
         # Tar the source files
         sleep(0.3)
-        obj = compress(self.fs_config.get_src_path())
+        obj = compress(self.fs_config.get_src_path(), self.fs_config.get_zip_passwd())
         self.sig_status_update.emit("Zipped")
 
         # Submit the zip file
         sleep(0.5)
-        digest = submit(self.user, self.proj, self.unit, self.main_class, obj)
+        digest = submit(self.user, self.proj, self.unit, self.main_class, self.fs_config.get_zip_passwd(), obj)
 
         if type(digest) != str or digest.startswith("-"):
             print("Bad Digest: ", digest)  # TODO: Error handler

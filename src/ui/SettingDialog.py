@@ -51,6 +51,12 @@ class SettingDialog(QDialog):
         self.m_line_src.setReadOnly(True)
         self.m_grid_fs.addWidget(self.m_line_src)
 
+        self.m_btn_passwd = QPushButton(Strings.FileSystemSetting.Passwd, self)
+        self.m_grid_fs.addWidget(self.m_btn_passwd)
+        self.m_line_passwd = QLineEdit(self)
+        self.m_line_passwd.setPlaceholderText(Strings.FileSystemSetting.PasswdHint)
+        self.m_grid_fs.addWidget(self.m_line_passwd)
+
         self.m_group_fs = QGroupBox(Strings.FileSystemSetting.Title, self)
         self.m_group_fs.setLayout(self.m_grid_fs)
         self.m_layout.addWidget(self.m_group_fs)
@@ -144,6 +150,7 @@ class SettingDialog(QDialog):
         self.m_btn_info.clicked.connect(self.slot_info_clicked)
         self.m_line_url.textChanged.connect(self.slot_url_modify)
         self.m_line_port.textChanged.connect(self.slot_port_modify)
+        self.m_line_passwd.textChanged.connect(self.config.set_zip_passwd)
         self.m_btn_test.clicked.connect(self.slot_conn_test)
 
         # ====== Launch ======
@@ -207,3 +214,4 @@ class SettingDialog(QDialog):
         self.m_line_storage.setText(s if s else Strings.Common.Unknown)
         s = self.config.get_src_path()
         self.m_line_src.setText(s if s else Strings.Common.Unknown)
+        self.m_line_passwd.setText(self.config.get_zip_passwd())

@@ -6,9 +6,11 @@ class Strings:
         Unknown = "<未定义>"
 
     class FileSystemSetting:
-        Title = "文件路径配置"
+        Title = "文件配置"
         Storage = "下载路径..."
         Src = "源代码路径..."
+        Passwd = "压缩包密码"
+        PasswdHint = "留空则不设置密码"
 
     class JavaSetting:
         Title = "Java 配置"

@@ -6,9 +6,11 @@ class Strings:
         Unknown = "<Undefined>"
 
     class FileSystemSetting:
-        Title = "Path Config"
+        Title = "File Config"
         Storage = "Save Path..."
         Src = "Code Path..."
+        Passwd = "Zip Passwd"
+        PasswdHint = "Empty Means NO Password"
 
     class JavaSetting:
         Title = "Java Config"
