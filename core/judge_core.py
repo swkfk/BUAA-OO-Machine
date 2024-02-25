@@ -26,8 +26,14 @@ class JudgeCore:
         self._add_status("Submitted")
 
         async def worker():
-            await self._unzip()
+            # Unzip may fail
+            if not await self._unzip():
+                await self._set_ce()
+                return
+            # Compile
             ret = await self._compile()
+            # Clear the java/.../src directory
+            await self._clear_src()
             if ret == 0:
                 await self._run_test()
             else:
@@ -58,11 +64,16 @@ class JudgeCore:
         self.source_path.mkdir(parents=False, exist_ok=False)
 
     async def _unzip(self):
-        zf = zipfile.ZipFile(self.zipped_file)
-        zf.extractall(path=self.source_path)
-        zf.close()
-
-        self._add_status("Unzipped")
+        try:
+            zf = zipfile.ZipFile(self.zipped_file)
+            zf.extractall(path=self.source_path)
+            zf.close()
+            self._add_status("Unzipped")
+            return True
+        except Exception as e:
+            self._add_status("Err::CE")
+            (self.target_path / "compile-msg.txt").write_text("Internal Server Error Caught:\n" + repr(e))
+        return False
 
     async def _compile(self):
         # 1. List all java files
@@ -84,6 +95,9 @@ class JudgeCore:
         else:
             self._add_status("Compiled")
         return ret
+
+    async def _clear_src(self):
+        shutil.rmtree(self.source_path)
 
     async def _run_test(self):
         # 1. Get all the input files needed
