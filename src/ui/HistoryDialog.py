@@ -75,9 +75,8 @@ class HistoryDialog(QDialog):
         def aux(response: RequestData):
             self.status_ready()
             if response.status_code == 200:
-                lst = response.data
-                self.history_list = sorted(lst, key=lambda x: x["time"], reverse=True)
-                self.history_idx = 0 if len(lst) != 0 else -1
+                self.history_list = response.data[::-1]
+                self.history_idx = 0 if len(self.history_list) != 0 else -1
             else:
                 QMessageBox.critical(self, "[History] Unhandled Error!", response.data["."])
             self.update_button_status()
