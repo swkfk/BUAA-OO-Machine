@@ -2,6 +2,7 @@ import base64
 import time
 import hashlib
 import json
+from typing import Optional
 
 from fastapi import APIRouter, UploadFile, File
 
@@ -12,13 +13,17 @@ router = APIRouter()
 
 
 @router.post("/submit")
-async def SubmitCode(user: str, proj: int, unit: int, class_b64: str, file: UploadFile = File(...)):
+async def SubmitCode(user: str, proj: int, unit: int, class_b64: str,
+                     passwd: Optional[str] = None, salt: Optional[str] = None,
+                     file: UploadFile = File(...)):
     """
     提交代码，提交文件为压缩包，不包含 "src" 文件夹
     :param user: 用户名，临时用户的用户名为 "__TEMP__"
     :param proj: 项目的 **编号**， 从 0 开始计数
     :param unit: 单元的 **编号**， 从 0 开始计数
     :param class_b64: 主类的 url-safe base64 编码
+    :param passwd: 压缩包密码（加密后），与旧版本前端兼容
+    :param salt: 压缩包密码加密使用的 salt，与旧版本前端兼容
     :param file: 接收的文件对象
     :return: 该次提交的代码摘要（使用 md5 算法加盐）
     """
@@ -42,7 +47,7 @@ async def SubmitCode(user: str, proj: int, unit: int, class_b64: str, file: Uplo
     class_file.write_text(main_class)
 
     # Run the judge process before record the submission into the user's database
-    JudgeCore(digest, (user, proj, unit)).run()
+    JudgeCore(digest, (user, proj, unit), (passwd, salt)).run()
 
     user_file = USER_ROOT / f"{user}.json"
     if not user_file.exists():

@@ -4,14 +4,18 @@ import threading
 import zipfile
 from typing import Literal
 
+import pyzipper
+
 from core.cmd import Cmd
 from core.fs import SOURCE_ROOT, JAVA_ROOT, GetPointListOfTimestamp, POINT_ROOT, GetPointTimestamp, COURSE_ROOT, \
     JsonLoader
+from core.decryptor import StrDecryptor, FileDecryptor
 
 
 class JudgeCore:
-    def __init__(self, digest: str, sys_info: (str, int, int)):
+    def __init__(self, digest: str, sys_info: (str, int, int), passwd_info: (str, str)):
         self.user, self.proj, self.unit = sys_info
+        self.passwd_cipher, self.passwd_salt = passwd_info
         self.digest = digest
         self.zipped_file = SOURCE_ROOT / f"{digest}.zip"
         self.target_path = JAVA_ROOT / f"{digest}"
@@ -64,16 +68,32 @@ class JudgeCore:
         self.source_path.mkdir(parents=False, exist_ok=False)
 
     async def _unzip(self):
+        if self.passwd_cipher is not None and self.passwd_salt is not None:
+            passwd = StrDecryptor(self.passwd_cipher, self.passwd_salt, self.user)
+            b = self.zipped_file.read_bytes()
+            self.zipped_file.write_bytes(FileDecryptor(bytearray(b), passwd))
+        else:
+            passwd = None
+
         try:
             zf = zipfile.ZipFile(self.zipped_file)
             zf.extractall(path=self.source_path)
             zf.close()
-            self._add_status("Unzipped")
-            return True
+
+            if passwd is not None:
+                zf = pyzipper.AESZipFile(self.zipped_file, "w", encryption=pyzipper.WZ_AES)
+                zf.setpassword(passwd)
+                for file in self.source_path.rglob("*"):
+                    zf.write(file, arcname=file.relative_to(self.source_path))
+                zf.close()
+
         except Exception as e:
             self._add_status("Err::CE")
             (self.target_path / "compile-msg.txt").write_text("Internal Server Error Caught:\n" + repr(e))
-        return False
+            return False
+
+        self._add_status("Unzipped")
+        return True
 
     async def _compile(self):
         # 1. List all java files
