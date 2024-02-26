@@ -1,5 +1,8 @@
+import asyncio
 import subprocess
 import sys
+import time
+
 if sys.version_info[1] < 11:
     from typing_extensions import Self
 else:
@@ -49,14 +52,24 @@ class Cmd:
             cwd=self._cwd
         )
 
-    def wait(self, timeout_secs: int = None) -> int:
+    async def wait(self, timeout_secs: int = None) -> int:
         if self._process is None:
             self.run()
-        return self._process.wait(timeout_secs)
+        if timeout_secs is None:
+            return self._process.wait()
+        print(time.time())
+        for _ in range(timeout_secs):
+            await asyncio.sleep(1.1)
+            ret = self._process.poll()
+            if ret is not None:
+                return ret
+        print(time.time())
+        self._process.kill()
+        raise subprocess.TimeoutExpired("java", timeout_secs)
 
     def __del__(self):
         try:
             if self._process is not None:
-                self._process.wait(10)
+                self._process.wait(1)
         except subprocess.TimeoutExpired:
             self._process.kill()

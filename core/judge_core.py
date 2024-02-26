@@ -103,7 +103,7 @@ class JudgeCore:
             lists.append(str(item))
         (self.target_path / "sources.list").write_text("\n".join(lists))
         # 2. Compile it!
-        ret = Cmd("javac") \
+        ret = await Cmd("javac") \
             .args(["-d", str(self.build_path)]) \
             .args(["-encoding", "utf-8"]) \
             .arg("-g") \
@@ -133,7 +133,7 @@ class JudgeCore:
             err_path = base_path / "stderr" / self.user
             ret_path = base_path / "return_value" / self.user
             try:
-                ret = Cmd("java") \
+                ret = await Cmd("java") \
                     .arg(self.main_class) \
                     .args(["-cp", "."]) \
                     .cwd(str(self.build_path)) \
@@ -177,7 +177,7 @@ class JudgeCore:
                 continue
 
             try:
-                ret = Cmd("java") \
+                ret = await Cmd("java") \
                     .arg(main_class) \
                     .args(["-cp", "."]) \
                     .cwd(str(target_path / "class")) \
@@ -187,5 +187,4 @@ class JudgeCore:
                     .wait(4)
             except subprocess.TimeoutExpired:
                 ret = "<Time Limit Exceed: 4s>"
-
             (base_path / "return_value" / user).write_text(str(ret))
