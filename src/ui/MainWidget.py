@@ -8,6 +8,7 @@ from src.core import SysInfo
 from src.core.Reboot import reboot
 from src.core.requests.CommonRequests import callback_handler
 from src.core.requests.RequestThread import RequestData
+from src.core.settings.I18nConfig import have_lang
 from src.core.settings.SystemConfig import get_theme, check_version
 from src.ui.I18nDialog import I18nDialog
 from src.ui.PointArea import PointArea
@@ -35,10 +36,13 @@ class MainWidget(QMainWindow):
 
         self.user = LocalAuthentic.User()
 
-        # If it is a new user
-        if self.user.status() == self.user.UserStatus.NONE:
+        if not have_lang():
             # I18n Config
             I18nDialog(self)
+            reboot()
+
+        # If it is a new user
+        if self.user.status() == self.user.UserStatus.NONE:
             # Enter the Username
             RegisterDialog(self, self.user.create_user)
             # The Setting Dialog
