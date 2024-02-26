@@ -1,5 +1,6 @@
 import asyncio
 import shutil
+import subprocess
 import threading
 import zipfile
 from typing import Literal
@@ -131,14 +132,17 @@ class JudgeCore:
             out_path = base_path / "stdout" / self.user
             err_path = base_path / "stderr" / self.user
             ret_path = base_path / "return_value" / self.user
-            ret = Cmd("java") \
-                .arg(self.main_class) \
-                .args(["-cp", "."]) \
-                .cwd(str(self.build_path)) \
-                .stdin(open(in_path, "r")) \
-                .stdout(open(out_path, "w")) \
-                .stderr(open(err_path, "w")) \
-                .wait()
+            try:
+                ret = Cmd("java") \
+                    .arg(self.main_class) \
+                    .args(["-cp", "."]) \
+                    .cwd(str(self.build_path)) \
+                    .stdin(open(in_path, "r")) \
+                    .stdout(open(out_path, "w")) \
+                    .stderr(open(err_path, "w")) \
+                    .wait(4)
+            except subprocess.TimeoutExpired:
+                ret = "<Time Limit Exceed: 4s>"
             rets.append(ret)
             ret_path.write_text(str(ret))
         if any(rets):
@@ -172,12 +176,16 @@ class JudgeCore:
             if (target_path / "status" / "Err::CE").exists():
                 continue
 
-            ret = Cmd("java") \
-                .arg(main_class) \
-                .args(["-cp", "."]) \
-                .cwd(str(target_path / "class")) \
-                .stdin(open(base_path / "stdin", "r")) \
-                .stdout(open(base_path / "stdout" / user, "w")) \
-                .stderr(open(base_path / "stderr" / user, "w")) \
-                .wait()
+            try:
+                ret = Cmd("java") \
+                    .arg(main_class) \
+                    .args(["-cp", "."]) \
+                    .cwd(str(target_path / "class")) \
+                    .stdin(open(base_path / "stdin", "r")) \
+                    .stdout(open(base_path / "stdout" / user, "w")) \
+                    .stderr(open(base_path / "stderr" / user, "w")) \
+                    .wait(4)
+            except subprocess.TimeoutExpired:
+                ret = "<Time Limit Exceed: 4s>"
+
             (base_path / "return_value" / user).write_text(str(ret))
