@@ -1,5 +1,7 @@
 from typing import Callable
 
+import timeout_decorator
+
 from core.checker_cacher import LoadCheckerData, StoreCheckerData
 from core.default_checker import Fn as default_checker
 from core.fs import COURSE_ROOT, JsonLoader, DB_ROOT, GetPointTimestamp, POINT_ROOT
@@ -19,11 +21,17 @@ async def GetDiffSame(proj: int, unit: int, point: int, user: str):
     checker_s: str = unit_obj["judge"]
 
     if checker_s == "":
-        checker: Callable = default_checker
+        raw_checker: Callable = default_checker
         compare_all = True
     else:
-        checker: Callable = Checkers[checker_s][1]
+        raw_checker: Callable = Checkers[checker_s][1]
         compare_all = Checkers[checker_s][0]
+
+    def checker(**kwargs):
+        try:
+            return timeout_decorator.timeout(1)(raw_checker)(**kwargs)
+        except timeout_decorator.TimeoutError:
+            return False, "Checker Timeout!"
 
     timestamp = await GetPointTimestamp(proj, unit, point)
     stdout_path = POINT_ROOT / f"{timestamp}" / "stdout"
