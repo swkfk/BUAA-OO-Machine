@@ -1,5 +1,7 @@
 from typing import IO
 
+from checkers.CheckerMetadata import CheckerMetadata
+
 
 def _check_main(**kwargs) -> (bool, str):
     """
@@ -24,5 +26,5 @@ def _check_main(**kwargs) -> (bool, str):
 
 
 # Information Needed for the checker_core
-CompareType = True  # Is the checker needed to compare your stdout with others'
+CompareType = CheckerMetadata.Mutual
 Fn = _check_main

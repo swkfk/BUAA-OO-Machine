@@ -7,8 +7,8 @@ class _CheckerCacher:
 
     @staticmethod
     def make_key(digest1: str, digest2: str, proj: int, unit: int, point: int):
-        if digest1 > digest2:
-            digest1, digest2 = digest2, digest1
+        # if digest1 > digest2:
+        #     digest1, digest2 = digest2, digest1
         return f"@{proj}.{unit}.{point}#{digest1}|{digest2}"
 
     def __call__(self, mode: Literal["load", "store"]):

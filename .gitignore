@@ -3,3 +3,4 @@ __pycache__/
 database/
 checkers/*
 !checkers/CheckerTemplate.py
+!checkers/CheckerMetadata.py
