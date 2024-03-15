@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from core.checker_core import GetDiffSame
-from core.fs import JsonLoader, DB_ROOT, COURSE_ROOT, USER_ROOT, GetPointTimestamp, POINT_ROOT
+from core.fs import JsonLoader, DB_ROOT, COURSE_ROOT, USER_ROOT, GetPointTimestamp, POINT_ROOT, GetPointEnable
 
 router = APIRouter()
 
@@ -44,6 +44,14 @@ async def GetPointList(user: str, proj: int, unit: int):
     unit_obj = await JsonLoader(unit_path)
     lst = []
     for point_idx, point in enumerate(unit_obj):
+        if not await GetPointEnable(proj, unit, point_idx):
+            lst.append({
+                "same": ['Disabled!'], "diff": [],  # For old-version front-end
+                "desc": point["desc"],
+                "ret_desc": "Return Value: 0",
+                "disabled": True  # For new-version front-end
+            })
+            continue
         timestamp = await GetPointTimestamp(proj, unit, point_idx)
         ret_file = POINT_ROOT / f"{timestamp}" / "return_value" / user
         if ret_file.exists():

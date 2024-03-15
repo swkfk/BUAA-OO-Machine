@@ -56,6 +56,19 @@ async def GetPointListOfTimestamp(proj: int, unit: int):
     return [obj["timestamp"] for obj in unit_obj]
 
 
+async def SetPointEnable(proj: int, unit: int, point: int, disabled: True):
+    unit_file = COURSE_ROOT / f"{proj}" / f"{unit}.json"
+    unit_obj = await JsonLoader(unit_file)
+    unit_obj[point]["disabled"] = disabled
+    json.dump(unit_obj, open(unit_file, "w"))
+
+
+async def GetPointEnable(proj: int, unit: int, point: int):
+    unit_file = COURSE_ROOT / f"{proj}" / f"{unit}.json"
+    unit_obj = await JsonLoader(unit_file)
+    return not ("disabled" in unit_obj[point] and unit_obj[point]["disabled"])
+
+
 async def ZipOutputs(path: str):
     tf = tempfile.NamedTemporaryFile(suffix=".zip")
     zf = ZipFile(tf, "w")

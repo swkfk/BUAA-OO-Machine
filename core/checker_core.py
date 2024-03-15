@@ -5,7 +5,7 @@ import timeout_decorator
 from checkers.CheckerMetadata import CheckerMetadata
 from core.checker_cacher import LoadCheckerData, StoreCheckerData
 from core.default_checker import Fn as default_checker
-from core.fs import COURSE_ROOT, JsonLoader, DB_ROOT, GetPointTimestamp, POINT_ROOT
+from core.fs import COURSE_ROOT, JsonLoader, DB_ROOT, GetPointTimestamp, POINT_ROOT, GetPointEnable
 from checkers import Checkers
 
 
@@ -35,6 +35,10 @@ async def GetDiffSame(proj: int, unit: int, point: int, user: str):
             return False, "Checker Timeout!"
 
     timestamp = await GetPointTimestamp(proj, unit, point)
+
+    if not GetPointEnable:
+        return [], []
+
     stdout_path = POINT_ROOT / f"{timestamp}" / "stdout"
     ret_v_path = POINT_ROOT / f"{timestamp}" / "return_value"
 
