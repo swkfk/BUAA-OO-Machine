@@ -6,7 +6,7 @@ from PyQt6.QtGui import QColor
 from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QMessageBox, QTextEdit, QGridLayout, QErrorMessage
 
 from src.ui.PointIndexLabel import PointIndexLabel
-from src.core.requests.SimpleQueryRequests import GetPointREMsg
+from src.core.requests.SimpleQueryRequests import GetPointREMsg, SetPointStatus
 from src.core.requests.DownloadThread import DownloadThread
 from src.core.requests.RequestThread import RequestData
 from src.core.requests.UrlGenerator import URL
@@ -27,16 +27,20 @@ class UI:
         Correct = QColor(255, 255, 128)
         Diff = QColor(128, 128, 255)
         Error = QColor(255, 36, 36)
+        Disabled = QColor(150, 150, 150)
 
 
 class PointArea(QWidget):
-    def __init__(self, idx, same_lst, diff_lst, desc, ret_desc, user: str, proj: int, unit: int, status_fn):
+    def __init__(self, idx, same_lst, diff_lst, desc, ret_desc,
+                 user: str, proj: int, unit: int,
+                 disabled: bool, status_fn):
         super().__init__()
 
         self.download_thread = None
         self.config = FileSystemConfig()
 
         self.user, self.proj, self.unit, self.point = user, proj, unit, idx
+        self.disabled = disabled
         self.status_ready, self.status_busy = status_fn
 
         self.setAttribute(Qt.WidgetAttribute.WA_AlwaysShowToolTips)
@@ -48,6 +52,7 @@ class PointArea(QWidget):
         self.m_layout_main.setColumnStretch(2, 5)
         self.m_layout_main.setColumnStretch(3, 5)
         self.m_layout_main.setColumnStretch(4, 10)
+        self.m_layout_main.setColumnStretch(5, 5)
         self.setLayout(self.m_layout_main)
 
         self.m_label_idx = PointIndexLabel(Strings.Widget.Index.format(idx), self)
@@ -67,6 +72,14 @@ class PointArea(QWidget):
         self.m_text.setReadOnly(True)
         self.m_layout_main.addWidget(self.m_text, 0, 4, 2, 1, Qt.AlignmentFlag.AlignCenter)
 
+        self.m_btn_switch = QPushButton(Strings.Modify.Enable if disabled else Strings.Modify.Disable, self)
+        if not disabled:
+            self.m_btn_switch.clicked.connect(self.slot_set_disable)
+        self.m_layout_main.addWidget(self.m_btn_switch, 0, 5, 1, 1)
+
+        self.m_btn_modify = QPushButton(Strings.Modify.ModifyDesc, self)
+        self.m_layout_main.addWidget(self.m_btn_modify, 1, 5, 1, 1)
+
         self.m_btn_dict: {str, QPushButton} = {
             "input": QPushButton(Strings.Download.Input, self),
             "output": QPushButton(Strings.Download.Output, self),
@@ -77,14 +90,28 @@ class PointArea(QWidget):
             self.m_layout_main.addWidget(self.m_btn_dict[scope], *UI.BtnPos[scope])
             self.m_btn_dict[scope].clicked.connect(self.slot_common_download(scope))
 
+        if disabled:
+            self.m_label_idx.setBackgroundColor(UI.LabelColor.Disabled)
         # Judge Correct
-        if ret_desc == "Return Value: 0":
+        elif ret_desc == "Return Value: 0":
             if len(diff_lst) == 0:
                 self.m_label_idx.setBackgroundColor(UI.LabelColor.Correct)
             else:
                 self.m_label_idx.setBackgroundColor(UI.LabelColor.Diff)
         else:
             self.m_label_idx.setBackgroundColor(UI.LabelColor.Error)
+
+    def slot_modify_desc(self):
+        pass
+
+    def slot_set_disable(self):
+        def aux(response: RequestData):
+            if response.status_code == 200:
+                QMessageBox.information(self, "Okay!", response.data)
+            else:
+                QMessageBox.critical(self, "[Requests Error]", response.data)
+
+        SetPointStatus(aux, self.proj, self.unit, self.point, True)
 
     def slot_request_re_msg(self):
         def aux(response: RequestData):

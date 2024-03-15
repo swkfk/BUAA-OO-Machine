@@ -237,6 +237,7 @@ class MainWidget(QMainWindow):
                 pa = PointArea(
                     idx, point["same"], point["diff"], point["desc"], point["ret_desc"],
                     self.real_user(), self.proj_id(), self.unit_id(),
+                    "disabled" in point and point["disabled"],
                     (self.status_ready, self.status_busy)
                 )
                 self.m_widget_list_point.append(pa)

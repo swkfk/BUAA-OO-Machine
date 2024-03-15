@@ -31,6 +31,10 @@ class URL:
         return f"{URL.BaseUrl()}/src?digest={digest}"
 
     @staticmethod
+    def SetPointStatus(proj: int, unit: int, point: int, disabled: bool):
+        return f"{URL.BaseUrl()}/point/set-status?proj={proj}&unit={unit}&point={point}&disabled={int(disabled)}"
+
+    @staticmethod
     def ConnTest():
         return f"{URL.BaseUrl()}/"
 

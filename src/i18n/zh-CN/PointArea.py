@@ -32,3 +32,8 @@ class Strings:
     class WrongPath:
         Title = "下载路径错误"
         Content = "非法的下载路径：' {} ' \n请前往 “设置” 检查、修改。"
+
+    class Modify:
+        Enable = "启用测试点"
+        Disable = "禁用测试点"
+        ModifyDesc = "修改描述..."

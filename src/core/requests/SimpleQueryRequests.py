@@ -17,6 +17,9 @@ def GetPointInfo(aux, user_name: str, proj_id: int, unit_id: int):
 def GetPointREMsg(aux, user_name: str, proj_id: int, unit_id: int, point_id: int):
     __handler(aux, URL.REMsg(user_name, proj_id, unit_id, point_id))
 
+def SetPointStatus(aux, proj_id: int, unit_id: int, point_id: int, disabled: bool):
+    __handler(aux, URL.SetPointStatus(proj_id, unit_id, point_id, disabled))
+
 
 def ConnectTest(aux):
     __handler(aux, URL.ConnTest())

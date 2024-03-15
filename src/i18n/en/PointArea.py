@@ -32,3 +32,8 @@ class Strings:
     class WrongPath:
         Title = "Invalid Download Path"
         Content = "Invalid Download Path: ' {} ' \nPlease check and modify it in 'Settings'"
+
+    class Modify:
+        Enable = "Enable"
+        Disable = "Disable"
+        ModifyDesc = "Modify Desc..."
