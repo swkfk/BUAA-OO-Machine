@@ -58,8 +58,8 @@ class Cmd:
         if timeout_secs is None:
             return self._process.wait()
         print(time.time())
-        for _ in range(timeout_secs):
-            await asyncio.sleep(1.1)
+        for _ in range(timeout_secs * 10):
+            await asyncio.sleep(0.105)
             ret = self._process.poll()
             if ret is not None:
                 return ret
