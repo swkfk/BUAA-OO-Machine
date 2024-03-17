@@ -50,10 +50,10 @@ async def GetPointTimestamp(proj: int, unit: int, point: int):
     return unit_obj[point]["timestamp"]
 
 
-async def GetPointListOfTimestamp(proj: int, unit: int):
+async def GetPointListOfEnabledTimestamp(proj: int, unit: int):
     unit_file = COURSE_ROOT / f"{proj}" / f"{unit}.json"
     unit_obj = await JsonLoader(unit_file)
-    return [obj["timestamp"] for obj in unit_obj]
+    return [obj["timestamp"] for obj in unit_obj if not obj.get('disabled', False)]
 
 
 async def SetPointEnable(proj: int, unit: int, point: int, disabled: True):

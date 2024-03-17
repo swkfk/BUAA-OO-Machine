@@ -8,7 +8,7 @@ from typing import Literal
 import pyzipper
 
 from core.cmd import Cmd
-from core.fs import SOURCE_ROOT, JAVA_ROOT, GetPointListOfTimestamp, POINT_ROOT, GetPointTimestamp, COURSE_ROOT, \
+from core.fs import SOURCE_ROOT, JAVA_ROOT, GetPointListOfEnabledTimestamp, POINT_ROOT, GetPointTimestamp, COURSE_ROOT, \
     JsonLoader
 from core.decryptor import StrDecryptor, FileDecryptor
 
@@ -124,7 +124,7 @@ class JudgeCore:
 
     async def _run_test(self):
         # 1. Get all the input files needed
-        lst: [int] = await GetPointListOfTimestamp(self.proj, self.unit)
+        lst: [int] = await GetPointListOfEnabledTimestamp(self.proj, self.unit)
 
         # 2. Run all of them
         rets = []
@@ -153,7 +153,7 @@ class JudgeCore:
             self._add_status("Done")
 
     async def _set_ce(self):
-        lst: [int] = await GetPointListOfTimestamp(self.proj, self.unit)
+        lst: [int] = await GetPointListOfEnabledTimestamp(self.proj, self.unit)
         compile_msg = \
             (self.target_path / "compile-msg.txt").read_text().replace(f"database/java/{self.digest}/", "")
         for timestamp in lst:
