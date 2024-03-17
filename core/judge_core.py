@@ -12,6 +12,8 @@ from core.fs import SOURCE_ROOT, JAVA_ROOT, GetPointListOfTimestamp, POINT_ROOT,
     JsonLoader
 from core.decryptor import StrDecryptor, FileDecryptor
 
+RUN_TIMEOUT_SECS = 4
+
 
 class JudgeCore:
     def __init__(self, digest: str, sys_info: (str, int, int), passwd_info: (str, str)):
@@ -140,9 +142,9 @@ class JudgeCore:
                     .stdin(open(in_path, "r")) \
                     .stdout(open(out_path, "w")) \
                     .stderr(open(err_path, "w")) \
-                    .wait(4)
+                    .wait(RUN_TIMEOUT_SECS)
             except subprocess.TimeoutExpired:
-                ret = "<Time Limit Exceed: 4s>"
+                ret = f"<Time Limit Exceed: {RUN_TIMEOUT_SECS}s>"
             rets.append(ret)
             ret_path.write_text(str(ret))
         if any(rets):
@@ -184,7 +186,7 @@ class JudgeCore:
                     .stdin(open(base_path / "stdin", "r")) \
                     .stdout(open(base_path / "stdout" / user, "w")) \
                     .stderr(open(base_path / "stderr" / user, "w")) \
-                    .wait(4)
+                    .wait(RUN_TIMEOUT_SECS)
             except subprocess.TimeoutExpired:
-                ret = "<Time Limit Exceed: 4s>"
+                ret = f"<Time Limit Exceed: {RUN_TIMEOUT_SECS}s>"
             (base_path / "return_value" / user).write_text(str(ret))

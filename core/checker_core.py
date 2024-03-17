@@ -8,6 +8,8 @@ from core.default_checker import Fn as default_checker
 from core.fs import COURSE_ROOT, JsonLoader, DB_ROOT, GetPointTimestamp, POINT_ROOT, GetPointEnable
 from checkers import Checkers
 
+CHECKER_TIMEOUT_SECS = 5
+
 
 async def GetDiffSame(proj: int, unit: int, point: int, user: str):
     submit_file = COURSE_ROOT / f"{proj}" / f"{unit}.submit.json"
@@ -30,7 +32,7 @@ async def GetDiffSame(proj: int, unit: int, point: int, user: str):
 
     def checker(**kwargs):
         try:
-            return timeout_decorator.timeout(1)(raw_checker)(**kwargs)
+            return timeout_decorator.timeout(CHECKER_TIMEOUT_SECS)(raw_checker)(**kwargs)
         except timeout_decorator.TimeoutError:
             return False, "Checker Timeout!"
 
