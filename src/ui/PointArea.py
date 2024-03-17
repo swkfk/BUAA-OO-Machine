@@ -1,7 +1,7 @@
 import os
 import pathlib
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QColor
 from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QMessageBox, QTextEdit, QGridLayout, QErrorMessage
 
@@ -31,6 +31,8 @@ class UI:
 
 
 class PointArea(QWidget):
+    sig_refresh_call = pyqtSignal()
+
     def __init__(self, idx, same_lst, diff_lst, desc, ret_desc,
                  user: str, proj: int, unit: int,
                  disabled: bool, status_fn):
@@ -73,8 +75,7 @@ class PointArea(QWidget):
         self.m_layout_main.addWidget(self.m_text, 0, 4, 2, 1, Qt.AlignmentFlag.AlignCenter)
 
         self.m_btn_switch = QPushButton(Strings.Modify.Enable if disabled else Strings.Modify.Disable, self)
-        if not disabled:
-            self.m_btn_switch.clicked.connect(self.slot_set_disable)
+        self.m_btn_switch.clicked.connect(self.slot_set_disable(not disabled))
         self.m_layout_main.addWidget(self.m_btn_switch, 0, 5, 1, 1)
 
         self.m_btn_modify = QPushButton(Strings.Modify.ModifyDesc, self)
@@ -104,14 +105,17 @@ class PointArea(QWidget):
     def slot_modify_desc(self):
         pass
 
-    def slot_set_disable(self):
-        def aux(response: RequestData):
-            if response.status_code == 200:
-                QMessageBox.information(self, "Okay!", response.data)
-            else:
-                QMessageBox.critical(self, "[Requests Error]", response.data)
+    def slot_set_disable(self, disable):
+        def ret():
+            def aux(response: RequestData):
+                if response.status_code == 200:
+                    QMessageBox.information(self, "Okay!", response.data)
+                else:
+                    QMessageBox.critical(self, "[Requests Error]", response.data)
+                self.sig_refresh_call.emit()
 
-        SetPointStatus(aux, self.proj, self.unit, self.point, True)
+            SetPointStatus(aux, self.proj, self.unit, self.point, disable)
+        return ret
 
     def slot_request_re_msg(self):
         def aux(response: RequestData):

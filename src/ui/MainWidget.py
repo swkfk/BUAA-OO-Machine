@@ -240,6 +240,7 @@ class MainWidget(QMainWindow):
                     "disabled" in point and point["disabled"],
                     (self.status_ready, self.status_busy)
                 )
+                pa.sig_refresh_call.connect(self.slot_update_point)
                 self.m_widget_list_point.append(pa)
                 self.m_layout_point.addWidget(pa)
             self.m_widget_point.setLayout(self.m_layout_point)
