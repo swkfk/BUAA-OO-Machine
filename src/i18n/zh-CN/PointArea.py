@@ -37,3 +37,8 @@ class Strings:
         Enable = "启用测试点"
         Disable = "禁用测试点"
         ModifyDesc = "修改描述..."
+
+    class ModifyDialog:
+        Title = "修改数据点描述"
+        Ok = "确认"
+        Cancel = "取消"

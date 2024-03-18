@@ -5,8 +5,9 @@ from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QColor
 from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QMessageBox, QTextEdit, QGridLayout, QErrorMessage
 
+from src.ui.ModifyDescDialog import ModifyDescDialog
 from src.ui.PointIndexLabel import PointIndexLabel
-from src.core.requests.SimpleQueryRequests import GetPointREMsg, SetPointStatus
+from src.core.requests.SimpleQueryRequests import GetPointREMsg, SetPointStatus, SetPointDesc
 from src.core.requests.DownloadThread import DownloadThread
 from src.core.requests.RequestThread import RequestData
 from src.core.requests.UrlGenerator import URL
@@ -79,6 +80,7 @@ class PointArea(QWidget):
         self.m_layout_main.addWidget(self.m_btn_switch, 0, 5, 1, 1)
 
         self.m_btn_modify = QPushButton(Strings.Modify.ModifyDesc, self)
+        self.m_btn_modify.clicked.connect(self.slot_modify_desc)
         self.m_layout_main.addWidget(self.m_btn_modify, 1, 5, 1, 1)
 
         self.m_btn_dict: {str, QPushButton} = {
@@ -103,15 +105,27 @@ class PointArea(QWidget):
             self.m_label_idx.setBackgroundColor(UI.LabelColor.Error)
 
     def slot_modify_desc(self):
-        pass
+        def handle_modify(new_desc):
+            def aux(response: RequestData):
+                if response.status_code == 200:
+                    QMessageBox.information(self, "Okay!", str(response.data))
+                else:
+                    QMessageBox.critical(self, "[Requests Error]", str(response.data))
+                self.sig_refresh_call.emit()
+
+            SetPointDesc(aux, self.proj, self.unit, self.point, new_desc)
+
+        modify_dlg = ModifyDescDialog(self, self.m_text.toHtml())
+        modify_dlg.sig_done.connect(handle_modify)
+        modify_dlg.exec()
 
     def slot_set_disable(self, disable):
         def ret():
             def aux(response: RequestData):
                 if response.status_code == 200:
-                    QMessageBox.information(self, "Okay!", response.data)
+                    QMessageBox.information(self, "Okay!", str(response.data))
                 else:
-                    QMessageBox.critical(self, "[Requests Error]", response.data)
+                    QMessageBox.critical(self, "[Requests Error]", str(response.data))
                 self.sig_refresh_call.emit()
 
             SetPointStatus(aux, self.proj, self.unit, self.point, disable)

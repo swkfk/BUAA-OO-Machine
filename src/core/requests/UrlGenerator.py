@@ -58,6 +58,10 @@ class URL:
         return f"{URL.BaseUrl()}/upload?proj={proj}&unit={unit}&desc={desc_base64}"
 
     @staticmethod
+    def ModifyDesc(proj: int, unit: int, point: int, desc_base64: str):
+        return f"{URL.BaseUrl()}/point/set-desc?proj={proj}&unit={unit}&point={point}&desc={desc_base64}"
+
+    @staticmethod
     def DownloadInout(scope: str, user: str, proj: int, unit: int, point: int):
         return f"{URL.BaseUrl()}/{scope}?user={user}&proj={proj}&unit={unit}&point={point}"
 

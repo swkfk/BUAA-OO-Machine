@@ -37,3 +37,8 @@ class Strings:
         Enable = "Enable"
         Disable = "Disable"
         ModifyDesc = "Modify Desc..."
+
+    class ModifyDialog:
+        Title = "Modify Description!"
+        Ok = "OK"
+        Cancel = "Cancel"
