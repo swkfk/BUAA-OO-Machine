@@ -4,7 +4,7 @@ import time
 
 from fastapi import APIRouter, UploadFile, File, BackgroundTasks
 
-from core.fs import COURSE_ROOT, JsonLoader, POINT_ROOT, SetPointEnable
+from core.fs import COURSE_ROOT, JsonLoader, POINT_ROOT, SetPointEnable, SetPointDesc
 from core.judge_core import JudgeCore
 
 router = APIRouter()
@@ -56,4 +56,10 @@ async def UploadTestPoint(proj: int, unit: int, desc: str, file: UploadFile, bac
 @router.get("/point/set-status")
 async def SetPointStatus(proj: int, unit: int, point: int, disabled: int):
     await SetPointEnable(proj, unit, point, disabled == 1)
+    return "Success!"
+
+@router.get("/point/set-desc")
+async def SetPointStatus(proj: int, unit: int, point: int, desc: str):
+    desc = base64.urlsafe_b64decode(desc).decode('utf-8')
+    await SetPointDesc(proj, unit, point, desc)
     return "Success!"

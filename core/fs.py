@@ -62,6 +62,11 @@ async def SetPointEnable(proj: int, unit: int, point: int, disabled: True):
     unit_obj[point]["disabled"] = disabled
     json.dump(unit_obj, open(unit_file, "w"))
 
+async def SetPointDesc(proj: int, unit: int, point: int, desc: str):
+    unit_file = COURSE_ROOT / f"{proj}" / f"{unit}.json"
+    unit_obj = await JsonLoader(unit_file)
+    unit_obj[point]["desc"] = desc
+    json.dump(unit_obj, open(unit_file, "w"))
 
 async def GetPointEnable(proj: int, unit: int, point: int):
     unit_file = COURSE_ROOT / f"{proj}" / f"{unit}.json"
