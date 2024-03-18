@@ -5,6 +5,8 @@ import threading
 import zipfile
 from typing import Literal
 
+from fastapi import WebSocket
+
 import pyzipper
 
 from core.cmd import Cmd
@@ -16,7 +18,8 @@ RUN_TIMEOUT_SECS = 4
 
 
 class JudgeCore:
-    def __init__(self, digest: str, sys_info: (str, int, int), passwd_info: (str, str)):
+    def __init__(self, ws: WebSocket, digest: str, sys_info: (str, int, int), passwd_info: (str, str)):
+        self.ws = ws
         self.user, self.proj, self.unit = sys_info
         self.passwd_cipher, self.passwd_salt = passwd_info
         self.digest = digest
@@ -30,9 +33,9 @@ class JudgeCore:
 
     def run(self):
         self._init_env()
-        self._add_status("Submitted")
 
         async def worker():
+            await self.ws.send_text("Submitted")
             # Unzip may fail
             if not await self._unzip():
                 await self._set_ce()
@@ -59,15 +62,11 @@ class JudgeCore:
         # Maybe this will be slow!
         threading.Thread(target=aux).start()
 
-    def _add_status(self, status: Literal["Submitted", "Unzipped", "Compiled", "Done", "Err::CE", "Err::RE"]):
-        (self.status_path / status).touch(exist_ok=False)
-
     def _init_env(self):
         if self.target_path.exists():
             shutil.rmtree(self.target_path)
 
-        self.status_path.mkdir(parents=True, exist_ok=False)
-        self.build_path.mkdir(parents=False, exist_ok=False)
+        self.build_path.mkdir(parents=True, exist_ok=False)
         self.source_path.mkdir(parents=False, exist_ok=False)
 
     async def _unzip(self):
@@ -91,11 +90,11 @@ class JudgeCore:
                 zf.close()
 
         except Exception as e:
-            self._add_status("Err::CE")
+            await self.ws.send_text("Err::CE")
             (self.target_path / "compile-msg.txt").write_text("Internal Server Error Caught:\n" + repr(e))
             return False
 
-        self._add_status("Unzipped")
+        await self.ws.send_text("Unzipped")
         return True
 
     async def _compile(self):
@@ -114,9 +113,9 @@ class JudgeCore:
             .stderr((self.target_path / "compile-msg.txt").open("w")) \
             .wait()
         if ret != 0:
-            self._add_status("Err::CE")
+            await self.ws.send_text("Err::CE")
         else:
-            self._add_status("Compiled")
+            await self.ws.send_text("Compiled")
         return ret
 
     async def _clear_src(self):
@@ -128,7 +127,8 @@ class JudgeCore:
 
         # 2. Run all of them
         rets = []
-        for timestamp in lst:
+        for idx, timestamp in enumerate(lst):
+            await self.ws.send_text(f"({idx + 1})")
             base_path = POINT_ROOT / str(timestamp)
             in_path = base_path / "stdin"
             out_path = base_path / "stdout" / self.user
@@ -148,9 +148,9 @@ class JudgeCore:
             rets.append(ret)
             ret_path.write_text(str(ret))
         if any(rets):
-            self._add_status("Err::RE")
+            await self.ws.send_text("Err::RE")
         else:
-            self._add_status("Done")
+            await self.ws.send_text("Done")
 
     async def _set_ce(self):
         lst: [int] = await GetPointListOfEnabledTimestamp(self.proj, self.unit)

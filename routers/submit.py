@@ -1,13 +1,16 @@
+import asyncio
 import base64
 import time
 import hashlib
 import json
 from typing import Optional
 
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, WebSocket
+from starlette.websockets import WebSocketState, WebSocketDisconnect
 
 from core.fs import COURSE_ROOT, JsonLoader, SOURCE_ROOT, USER_ROOT, JAVA_ROOT
 from core.judge_core import JudgeCore
+from core.submit_cacher import PushSubmitInfo, PopSubmitInfo
 
 router = APIRouter()
 
@@ -46,8 +49,7 @@ async def SubmitCode(user: str, proj: int, unit: int, class_b64: str,
         f.write(file)
     class_file.write_text(main_class)
 
-    # Run the judge process before record the submission into the user's database
-    JudgeCore(digest, (user, proj, unit), (passwd, salt)).run()
+    PushSubmitInfo(digest, (digest, (user, proj, unit), (passwd, salt)))
 
     user_file = USER_ROOT / f"{user}.json"
     if not user_file.exists():
@@ -63,10 +65,11 @@ async def SubmitCode(user: str, proj: int, unit: int, class_b64: str,
     return digest
 
 
-@router.get("/status")
-async def CheckSubmitStatus(digest: str):
+@router.websocket("/status/{digest}")
+async def CheckSubmitStatus(ws: WebSocket, digest: str):
     """
-    轮询提交状态的接口
+    发起、查询提交状态
+    :param ws: WebSocket 连接
     :param digest: 查询的提交的代码摘要
     :return: 一个表示当前状态的字符串，当且仅当为以下四种（且顺序不可乱）：
         "Submitted" 代码已提交，这是显然成立的
@@ -74,8 +77,10 @@ async def CheckSubmitStatus(digest: str):
         "Compiled"  代码编译成功
         "Done"      全部测评与比对工作已经完成
     """
-    status_path = JAVA_ROOT / f"{digest}" / "status"
-    for status in ["Done", "Err::RE", "Compiled", "Err::CE", "Unzipped", "Submitted"]:
-        if (status_path / status).exists():
-            return status
-    assert False, "Status missed for all"  # TODO: /// Use `raise` instead of `assert False`
+    await ws.accept()
+    JudgeCore(ws, *PopSubmitInfo(digest)).run()
+    # Keep the Socket Connection
+    try:
+        await ws.receive_text()
+    except WebSocketDisconnect:
+        pass
