@@ -1,4 +1,4 @@
-_ = """ 2024/03/18
+_042420 = """ 2024/03/18
 Status modification of the added data points:
 > It is possible to disable/enable a data point; a disabled data point will not be measured;
 > It is possible to modify the description information of data points;
@@ -35,6 +35,7 @@ First release!
 """
 
 ChangeLog = {
+    "042420": _042420,
     "032178": _032178,
     "032026": _032026,
     "021946": _021946
