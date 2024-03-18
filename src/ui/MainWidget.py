@@ -8,6 +8,7 @@ from src.core import SysInfo
 from src.core.Reboot import reboot
 from src.core.requests.CommonRequests import callback_handler
 from src.core.requests.RequestThread import RequestData
+from src.core.requests.SimpleQueryWebsocket import GetPointStatusWs
 from src.core.settings.I18nConfig import have_lang
 from src.core.settings.SystemConfig import get_theme, check_version
 from src.ui.I18nDialog import I18nDialog
@@ -226,7 +227,6 @@ class MainWidget(QMainWindow):
             else:
                 self.point_lst = []
                 QMessageBox.critical(self, "[Points] Unhandled Error!", response.data["."])
-
             self.m_widget_list_point.clear()
             while self.m_layout_point.count() > 0:
                 w = self.m_layout_point.takeAt(0).widget()
@@ -250,7 +250,9 @@ class MainWidget(QMainWindow):
         if self.m_combo_unit.count() == 0:
             return
         self.status_busy(Strings.Status.BusyUpdatePoint)
-        GetPointInfo(aux, self.real_user(), self.proj_id(), self.unit_id())
+        GetPointStatusWs(lambda s: self.status_busy(f"Update points: {s}"),
+                         lambda: GetPointInfo(aux, self.real_user(), self.proj_id(), self.unit_id()),
+                         self.real_user(), self.proj_id(), self.unit_id())
 
     def slot_submit(self):
         SubmitDialog(self, self.real_user(), self.proj_id(), self.unit_id())

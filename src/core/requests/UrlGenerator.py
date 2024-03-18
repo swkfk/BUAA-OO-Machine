@@ -27,6 +27,10 @@ class URL:
         return f"{URL.BaseUrl()}/point?user={user_name}&proj={proj_id}&unit={unit_id}"
 
     @staticmethod
+    def PointListWs(user_name: str, proj_id: int, unit_id: int):
+        return f"{URL.BaseWebSocketUrl()}/point/{user_name}/{proj_id}/{unit_id}"
+
+    @staticmethod
     def REMsg(user_name: str, proj_id: int, unit_id: int, point_id: int):
         return f"{URL.BaseUrl()}/errors/runtime?user={user_name}&proj={proj_id}&unit={unit_id}&point={point_id}"
 
