@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, WebSocket
 
 router = APIRouter()
 
@@ -10,3 +10,10 @@ async def ConnectTest():
     :return: 一个内容为 "Success!" 的字符串
     """
     return "Success!"
+
+
+@router.websocket("/")
+async def WebSocketConnectTest(websocket: WebSocket):
+    await websocket.accept()
+    user = await websocket.receive_text()
+    await websocket.send_text(f"Welcome, {user}!")
