@@ -1,3 +1,4 @@
+import re
 from functools import partial
 
 from PyQt6.QtCore import QSize, QRect, QUrl, pyqtSignal
@@ -6,10 +7,9 @@ from PyQt6.QtWidgets import QDialog, QGridLayout, QGroupBox, QPushButton, QLineE
 
 from src.core.Reboot import reboot
 from src.core.requests.SimpleQueryRequests import ConnectTest
-from src.core.requests.RequestThread import RequestData
 from src.core.settings.I18nConfig import set_lang, get_lang
 from src.core.settings.JavaConfig import set_main_class, get_main_class, get_ask_each, set_ask_each
-from src.core.settings.ServerConfig import server_config
+from src.core.settings.ServerConfig import server_config, get_ws_addr
 from src.core.settings.SystemConfig import is_dark_theme, set_theme, DARK_THEME, LIGHT_THEME
 from src.i18n import SettingDialog as Strings, lang_list
 from src.core.settings.FileSystemConfig import FileSystemConfig
@@ -23,10 +23,11 @@ class UI:
 class SettingDialog(QDialog):
     sig_theme_change = pyqtSignal()
 
-    def __init__(self, parent):
+    def __init__(self, parent, user_name):
         super().__init__(parent)
 
         self.config = FileSystemConfig()
+        self.user = user_name
 
         self.setWindowTitle(Strings.Window.Title)
         self.resize(UI.WindowSize)
@@ -99,10 +100,16 @@ class SettingDialog(QDialog):
         self.m_line_port.setPlaceholderText(Strings.ConnectionSetting.PortHolder)
         self.m_grid_conn.addWidget(self.m_line_port)
 
+        self.m_btn_ws = QPushButton(Strings.ConnectionSetting.WsBtn, self)
+        self.m_grid_conn.addWidget(self.m_btn_ws)
+        self.m_line_ws = QLineEdit(self)
+        self.m_line_ws.setReadOnly(True)
+        self.m_grid_conn.addWidget(self.m_line_ws, 1, 1, 1, 2)
+
         self.m_btn_test = QPushButton(Strings.ConnectionSetting.TestBtn, self)
         self.m_grid_conn.addWidget(self.m_btn_test)
         self.m_label_test = QLabel(self)
-        self.m_grid_conn.addWidget(self.m_label_test, 1, 1, 1, 2)
+        self.m_grid_conn.addWidget(self.m_label_test, 2, 1, 1, 2)
 
         self.m_group_conn = QGroupBox(Strings.ConnectionSetting.Title, self)
         self.m_group_conn.setLayout(self.m_grid_conn)
@@ -149,7 +156,9 @@ class SettingDialog(QDialog):
         self.m_btn_src.clicked.connect(self.slot_get_src)
         self.m_btn_info.clicked.connect(self.slot_info_clicked)
         self.m_line_url.textChanged.connect(self.slot_url_modify)
+        self.m_line_url.textChanged.connect(self.slot_addr_changed)
         self.m_line_port.textChanged.connect(self.slot_port_modify)
+        self.m_line_port.textChanged.connect(self.slot_addr_changed)
         self.m_line_passwd.textChanged.connect(self.config.set_zip_passwd)
         self.m_btn_test.clicked.connect(self.slot_conn_test)
 
@@ -163,6 +172,11 @@ class SettingDialog(QDialog):
             return
         set_lang(lang)
         reboot()
+
+    def slot_addr_changed(self):
+        host = self.m_line_url.text()
+        port = self.m_line_port.text()
+        self.m_line_ws.setText(get_ws_addr(host, port))
 
     def slot_get_storage(self):
         self.config.set_storage_path(self.get_path())
@@ -186,17 +200,12 @@ class SettingDialog(QDialog):
         server_config["port"] = self.m_line_port.text()
 
     def slot_conn_test(self):
-        def aux(response: RequestData):
-            if response.status_code == 200:
-                hint = response.data
-            elif response.status_code == 0:
-                hint = "Timeout!"
+        def aux(s, replace=False):
+            if replace:
+                self.m_label_test.setText(s)
             else:
-                hint = response.data
-            self.m_label_test.setText(Strings.ConnectionSetting.Label.format(response.status_code, hint))
-
-        self.m_label_test.setText(Strings.ConnectionSetting.Testing)
-        ConnectTest(aux)
+                self.m_label_test.setText(self.m_label_test.text() + s)
+        ConnectTest(aux, self.user)
 
     def get_path(self):
         path = QFileDialog.getExistingDirectoryUrl(self, "", QUrl("./")).toLocalFile()
@@ -215,3 +224,4 @@ class SettingDialog(QDialog):
         s = self.config.get_src_path()
         self.m_line_src.setText(s if s else Strings.Common.Unknown)
         self.m_line_passwd.setText(self.config.get_zip_passwd())
+        self.slot_addr_changed()

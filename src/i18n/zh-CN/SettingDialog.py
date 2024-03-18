@@ -24,8 +24,7 @@ class Strings:
         TestBtn = "测试连接..."
         UrlHolder = "地址"
         PortHolder = "端口号"
-        Label = "{}... {}"
-        Testing = "连接中..."
+        WsBtn = "WS 连接地址"
 
     class SystemConfig:
         Title = "系统配置"

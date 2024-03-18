@@ -2,3 +2,6 @@ PyQt6==6.6.1
 PyQt6_sip==13.6.0
 QDarkStyle==3.2.3
 requests==2.31.0
+
+websocket~=0.2.1
+websocket-client~=1.7.0

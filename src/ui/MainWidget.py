@@ -46,7 +46,7 @@ class MainWidget(QMainWindow):
             # Enter the Username
             RegisterDialog(self, self.user.create_user)
             # The Setting Dialog
-            sd = SettingDialog(self)
+            sd = SettingDialog(self, self.user.user_name())
             sd.sig_theme_change.connect(lambda: self.setStyleSheet(get_theme()))
             sd.exec()
 
@@ -173,7 +173,7 @@ class MainWidget(QMainWindow):
         HistoryDialog(self, self.user_name)
 
     def slot_open_setting(self):
-        sd = SettingDialog(self)
+        sd = SettingDialog(self, self.user.user_name())
         sd.sig_theme_change.connect(lambda: self.setStyleSheet(get_theme()))
         sd.exec()
 

@@ -24,8 +24,7 @@ class Strings:
         TestBtn = "Test..."
         UrlHolder = "Address"
         PortHolder = "Port"
-        Label = "{}... {}"
-        Testing = "Connecting..."
+        WsBtn = "WS Address"
 
     class SystemConfig:
         Title = "SystemConfig"

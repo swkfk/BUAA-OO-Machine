@@ -1,6 +1,8 @@
 import base64
 
-from src.core.requests.CommonRequests import callback_handler as __handler
+import websocket
+
+from src.core.requests.CommonRequests import callback_handler as __handler, raw_get
 from src.core.requests.UrlGenerator import URL
 
 
@@ -26,8 +28,18 @@ def SetPointDesc(aux, proj_id: int, unit_id: int, point_id: int, desc: str):
     __handler(aux, URL.ModifyDesc(proj_id, unit_id, point_id,
                                   base64.urlsafe_b64encode(desc.encode('utf-8')).decode('utf-8')))
 
-def ConnectTest(aux):
-    __handler(aux, URL.ConnTest())
+def ConnectTest(callback, user):
+    callback("Http: ", True)
+    http_resp = raw_get(URL.ConnTest())
+    callback(http_resp.text + " ; Websocket: ")
+    try:
+        ws = websocket.WebSocket()
+        ws.connect(URL.BaseWebSocketUrl())
+        ws.send(user)
+        callback(str(ws.recv()))
+        ws.close()
+    except Exception as e:
+        callback(repr(e))
 
 
 def GetNewVersion(aux):
