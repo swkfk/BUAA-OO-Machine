@@ -51,8 +51,8 @@ class URL:
         return f"{URL.BaseWebSocketUrl()}/"
 
     @staticmethod
-    def Status(digest: str):
-        return f"{URL.BaseUrl()}/status?digest={digest}"
+    def StatusWs(digest: str):
+        return f"{URL.BaseWebSocketUrl()}/status/{digest}"
 
     @staticmethod
     def Submit(user: str, proj: int, unit: int, class_base64: str, passwd: str = None, salt: str = None):

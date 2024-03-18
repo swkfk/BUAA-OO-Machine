@@ -1,9 +1,11 @@
 from time import sleep
 
+import websocket
 from PyQt6.QtCore import QThread, pyqtSignal
 
 from src.core.fs.Zip import compress
 from src.core.requests.SubmitOperation import get_status, submit
+from src.core.requests.UrlGenerator import URL
 from src.core.settings.FileSystemConfig import FileSystemConfig
 
 
@@ -29,12 +31,15 @@ class SubmitThread(QThread):
         if type(digest) != str or digest.startswith("-"):
             print("Bad Digest: ", digest)  # TODO: Error handler
             return
-        self.sig_status_update.emit("Submitted")
         self.sig_get_digest.emit(digest)
+        ws = websocket.WebSocket()
+        ws.connect(URL.StatusWs(digest))
+        status = ws.recv()
+        self.sig_status_update.emit(status)
+        assert (status == "Submitted"), f"Invalid Socket Msg: {status}"
 
         # Poll the status
-        status = "Submitted"
         while status != "Done" and not status.startswith("Err"):
-            sleep(0.7)
-            status = get_status(digest)
+            status = ws.recv()
             self.sig_status_update.emit(status)
+        ws.send_close()

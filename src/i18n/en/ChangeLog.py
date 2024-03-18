@@ -1,3 +1,13 @@
+_ = """ 2024/03/18
+Status modification of the added data points:
+> It is possible to disable/enable a data point; a disabled data point will not be measured;
+> It is possible to modify the description information of data points;
+
+Front-end and back-end interaction modification:
+> Use WebSocket to update the state description of data points, it will not timeout easily anymore;
+> Use WebSocket for status update during running process to ease the waiting anxiety;
+"""
+
 _032178 = """ 2024/02/25
 Protect source code files with a password (Go to "Settings" to view):
 >  Upload the zip file encrypted in bytes;

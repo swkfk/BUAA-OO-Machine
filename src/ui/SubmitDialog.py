@@ -99,7 +99,6 @@ class SubmitDialog(QDialog):
         try:
             index = ["Zipped", "Submitted", "Unzipped", "Compiled", "Done"].index(s)
         except ValueError as e:
-            print(f"Abnormal Status: {s}")
             index = -1
             if s == "Err::CE":
                 # Compile Error
@@ -111,9 +110,12 @@ class SubmitDialog(QDialog):
                 error_dlg = QErrorMessage(self)
                 error_dlg.setWindowTitle(Strings.Status.RE_Title)
                 error_dlg.showMessage(Strings.Status.RE_Content)
+            if s.startswith("("):
+                self.m_label_hint.setText(self.m_label_hint.text() + " " + s)
+                index = 3
             # QMessageBox.critical(self, "Unknown Exception!", f"Unknown Status: {s}\n{repr(e)}")
             # return
-        self.m_label_hint.setText(Strings.Status.Hint[index])
+        self.m_label_hint.setText(Strings.Status.Hint[index] + (s if s.startswith("(") else ""))
         for i in range(5):
             self.m_btn_bubble[i].setChecked(i <= index)
 
