@@ -1,7 +1,10 @@
-from fastapi import APIRouter
+import asyncio
+
+from fastapi import APIRouter, WebSocket
 
 from core.checker_core import GetDiffSame
 from core.fs import JsonLoader, DB_ROOT, COURSE_ROOT, USER_ROOT, GetPointTimestamp, POINT_ROOT, GetPointEnable
+from core.point_cacher import PushPointData, PopPointData
 
 router = APIRouter()
 
@@ -28,28 +31,28 @@ async def GetUnitList(proj: int):
     return [u["title"] for u in obj[proj]["units"]]
 
 
-@router.get("/point")
-async def GetPointList(user: str, proj: int, unit: int):
+@router.websocket("/point/{user}/{proj}/{unit}")
+async def GetPointList(ws: WebSocket, user: str, proj: int, unit: int):
     """
     获取某个用户对于某一项目、某一单元的测试点信息
+    :param ws: WebSocket 连接
     :param user: 用户名，临时用户的用户名为 "__TEMP__"
     :param proj: 项目的 **编号**， 从 0 开始计数
     :param unit: 单元的 **编号**， 从 0 开始计数
-    :return: 列表，每个元素为一个测试点的信息，有序。对于每个测试点的字典，包含如下键：
-        "same": [str],  结果相同的用户名称的列表
-        "diff": [str],  结果不同的用户名称的列表
-        "desc": str,    该测试点的描述
     """
     unit_path = COURSE_ROOT / f"{proj}" / f"{unit}.json"
     unit_obj = await JsonLoader(unit_path)
     lst = []
+    await ws.accept()
+    await ws.send_text(str(len(unit_obj)))
     for point_idx, point in enumerate(unit_obj):
+        await ws.send_text(str(point_idx + 1))
         if not await GetPointEnable(proj, unit, point_idx):
             lst.append({
-                "same": ['Disabled!'], "diff": [],  # For old-version front-end
+                "same": [], "diff": [],
                 "desc": point["desc"],
-                "ret_desc": "Return Value: 0",
-                "disabled": True  # For new-version front-end
+                "ret_desc": "",
+                "disabled": True
             })
             continue
         timestamp = await GetPointTimestamp(proj, unit, point_idx)
@@ -66,8 +69,13 @@ async def GetPointList(user: str, proj: int, unit: int):
             "desc": point["desc"],
             "ret_desc": ret
         })
-    return lst
+        await asyncio.sleep(0.01)  # How dare it?
+    PushPointData(user, proj, unit, lst)
+    await ws.send_text("-1")
 
+@router.get("/point")
+async def GetPointList(user: str, proj: int, unit: int):
+    return PopPointData(user, proj, unit)
 
 @router.get("/history")
 async def GetHistoryList(user: str):
