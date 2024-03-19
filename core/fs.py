@@ -33,7 +33,6 @@ class _JsonFileCacher:
             self._cache_time[path] = 0
         cur_time = os.path.getmtime(path)
         if cur_time > self._cache_time[path]:
-            print(f"Update Cache for {path}")
             # Update the cache
             self._cache[path] = json.load(f := open(path, "r"))
             f.close()

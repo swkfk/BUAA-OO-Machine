@@ -22,7 +22,6 @@ class _CheckerCacher:
         def aux_store(res: (bool, str), digest1: str, digest2: str, proj: int, unit: int, point: int):
             key = _CheckerCacher.make_key(digest1, digest2, proj, unit, point)
             self._map[key] = res
-            print(f"Update Cache for {key}")
 
         return aux_load if mode == "load" else aux_store
 

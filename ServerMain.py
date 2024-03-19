@@ -1,3 +1,6 @@
+import logging
+from logging.handlers import RotatingFileHandler
+
 from fastapi import FastAPI
 import uvicorn
 
@@ -20,6 +23,45 @@ app.include_router(router_upload)  # 上传测试数据
 app.include_router(router_errors)  # 错误信息交互
 app.include_router(router_upgrade)  # 前端检查更新
 
+LOGGING_CONFIG: dict = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "default": {
+            "()": "uvicorn.logging.DefaultFormatter",
+            "fmt": "%(asctime)s %(levelprefix)s %(message)s",
+            "use_colors": False,
+        },
+        "access": {
+            "()": "uvicorn.logging.AccessFormatter",
+            "fmt": '%(asctime)s %(levelprefix)s %(client_addr)s - "%(request_line)s" %(status_code)s',
+        },
+    },
+    "handlers": {
+        "default_file": {
+            "formatter": "default",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "uvicorn.default.log",
+            "mode": "a",
+            "maxBytes": 100 * 1024,
+            "backupCount": 3,
+        },
+        "access_file": {
+            "formatter": "access",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "uvicorn.access.log",
+            "mode": "a",
+            "maxBytes": 100 * 1024,
+            "backupCount": 3,
+        },
+    },
+    "loggers": {
+        "uvicorn": {"handlers": ["default_file"], "level": "INFO"},
+        "uvicorn.error": {"level": "INFO"},
+        "uvicorn.access": {"handlers": ["access_file"], "level": "INFO", "propagate": False},
+    },
+}
+
 if __name__ == "__main__":
     ensure_directory()
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    uvicorn.run(app, host="0.0.0.0", port=5080, log_config=LOGGING_CONFIG)
