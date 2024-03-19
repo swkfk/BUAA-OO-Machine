@@ -31,36 +31,22 @@ class JudgeCore:
 
         self.main_class = (SOURCE_ROOT / f"{digest}.entry").read_text()
 
-    def run(self):
+    async def run(self):
         self._init_env()
 
-        async def worker():
-            await self.ws.send_text("Submitted")
-            # Unzip may fail
-            if not await self._unzip():
-                await self._set_ce()
-                return
-            # Compile
-            ret = await self._compile()
-            # Clear the java/.../src directory
-            await self._clear_src()
-            if ret == 0:
-                await self._run_test()
-            else:
-                await self._set_ce()
-
-        # With mass chaos! I hava a poor knowledge about async / await!
-        def aux():
-            asyncio.set_event_loop(asyncio.new_event_loop())
-            loop = asyncio.get_event_loop()
-            tasks = [
-                worker()
-            ]
-            loop.run_until_complete(asyncio.wait(tasks))
-            loop.close()
-
-        # Maybe this will be slow!
-        threading.Thread(target=aux).start()
+        await self.ws.send_text("Submitted")
+        # Unzip may fail
+        if not await self._unzip():
+            await self._set_ce()
+            return
+        # Compile
+        ret = await self._compile()
+        # Clear the java/.../src directory
+        await self._clear_src()
+        if ret == 0:
+            await self._run_test()
+        else:
+            await self._set_ce()
 
     def _init_env(self):
         if self.target_path.exists():

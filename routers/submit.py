@@ -78,8 +78,7 @@ async def CheckSubmitStatus(ws: WebSocket, digest: str):
         "Done"      全部测评与比对工作已经完成
     """
     await ws.accept()
-    JudgeCore(ws, *PopSubmitInfo(digest)).run()
-    # Keep the Socket Connection
+    await JudgeCore(ws, *PopSubmitInfo(digest)).run()
     try:
         await ws.receive_text()
     except WebSocketDisconnect:
