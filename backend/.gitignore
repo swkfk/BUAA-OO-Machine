@@ -1,0 +1,6 @@
+__pycache__/
+.idea/
+database/
+checkers/*
+!checkers/CheckerTemplate.py
+!checkers/CheckerMetadata.py
