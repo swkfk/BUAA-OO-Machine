@@ -4,3 +4,5 @@ database/
 checkers/*
 !checkers/CheckerTemplate.py
 !checkers/CheckerMetadata.py
+!checkers/__init__.py
+*.log
