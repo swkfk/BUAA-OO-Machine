@@ -29,9 +29,13 @@ nohup python3 ServerMain.py&
 
 使用 `AdminMain.py` 可以在后台修改数据库。
 
-`python3 AdminMain add proj` 可以新建**单元**，后续按照提示输入信息即可。
+![后端设置](README.assets/admin-setting.png)
 
-`python3 AdminMain add unit` 可以在课程中新建**作业**，后续按照提示输入信息即可。
+`python3 AdminMain.py set version` 可以设置前端最新的版本号（正整数），前端会检查更新，并提醒用户进行更新。
+
+`python3 AdminMain.py add proj` 可以新建**单元**，后续按照提示输入信息即可。
+
+`python3 AdminMain.py add unit` 可以在课程中新建**作业**，后续按照提示输入信息即可。
 
 注意这里的英文和实际上课程内容的对应关系！！
 
@@ -137,3 +141,5 @@ Checkers = {
 ```
 
 于是，在新建这一次作业时，judge-method 应该填写 `Expr1`。
+
+**很遗憾，目前的后端无法做到新对拍脚本的热加载**。

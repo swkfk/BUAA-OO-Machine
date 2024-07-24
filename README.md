@@ -2,6 +2,13 @@
 
 **BUAA 面向对象课程对拍机**！此仓库包含**前端**（PyQt6）、**后端**（FastAPI）两部分，后端具备部署能力，并且已经经历了一学期一、三单元的检验。
 
+## 使用与部署
+
+`backend` 与 `frontend` 中的 `README.md` 分别介绍了后端、前端的**部署与使用方式**，可作参考，如果遇到什么困难或者 Bug，欢迎与我交流，或者提交 Issue 或者 PR！
+
+![前端截图](frontend/README.assets/mainwindow.png)
+
+![后端截图](backend/README.assets/log.png)
 
 ## 功能介绍
 
@@ -15,7 +22,3 @@
 
 使用 **WebSocket 技术**对耗时的操作进行前后端通信上的优化，减少用户界面的卡顿，优化用户体验。
 
-
-## 使用与部署
-
-`backend` 与 `frontend` 中的 `README.md` 分别介绍了后端、前端的**部署与使用方式**，可作参考，如果遇到什么困难或者 Bug，欢迎与我交流，或者提交 Issue 或者 PR！
